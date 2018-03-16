@@ -2,7 +2,7 @@
   <h3 align="center">nini</h3>
 
   <p align="center">
-    一个飞速构建HTML5的游戏框架, 飞的更高, 飞的更远!
+    A Game Engine For Creating HTML5 Game, Very Easy and Fast !
     <br>
     <br>
     <a href="https://github.com/yoshikizh/nini/blob/maste/README.md">简体中文</a>
@@ -13,18 +13,18 @@
 
 <br>
 
-## 内容导览
+## Table of contents
 
-- [快速开始](#快速开始)
-- [特性](#特性)
-- [精灵和位图](#精灵和位图)
-- [场景](#场景)
-- [动画](#动画)
-- [声音](#声音)
-- [交互](#交互)
+- [Quick start](#quick-start)
+- [Features](#Features)
+- [Bitmap and Sprite](#bitmap-and-sprite)
+- [Scene](#Scene)
+- [Animation](#Animation)
+- [Audio](#Audio)
+- [Interactive](#interactive)
 - [Copyright and license](#copyright-and-license)
 
-## 快速开始
+## Quick start
 
 
 加载ninijs
@@ -71,7 +71,7 @@ SceneManage.go(MainScene)
 
 ```
 
-## 特性
+## Features
 
 nini将画布(canvas)的绘图包装成精灵(Sprite)和位图(Bitmap),前者是游戏场景中能看到的部分，后者是图片的元数据
 渲染方式为canvas或Html5，游戏默认帧率为60
@@ -86,15 +86,15 @@ Sprite 和 Bitmap 是 nini 重要的组成部分, 他们负责加载图片并将
 他们两者不是强耦合, Bitmap 可以作为已加载的资源单独存在, 供Sprite使用
 Sprite 主要设置图片在场景中的属性 ( 如坐标位置，角度，缩放比例，透明度等 )
 
-## 场景
+## Scene
 未完待续
 
-## 动画
+## Animation
 未完待续
 
-## 声音
+## Audio
 
-## 交互
+## Interactive
 
 ## Copyright and license
 遵循开源MIT协议
