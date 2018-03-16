@@ -5,9 +5,9 @@
     A Game Engine For Creating HTML5 Game, Very Easy and Fast !
     <br>
     <br>
-    <a href="https://github.com/yoshikizh/nini/maste/README.md">简体中文</a>
+    <a href="https://github.com/yoshikizh/nini">简体中文</a>
     ·
-    <a href="https://github.com/yoshikizh/nini/maste/README-en.md/">English</a>
+    <a href="https://github.com/yoshikizh/nini/blob/master/README-en.md">English</a>
   </p>
 </p>
 

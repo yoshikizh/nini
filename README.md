@@ -5,9 +5,9 @@
     一个飞速构建HTML5的游戏框架, 飞的更高, 飞的更远!
     <br>
     <br>
-    <a href="https://github.com/yoshikizh/nini/maste/README.md">简体中文</a>
+    <a href="https://github.com/yoshikizh/nini">简体中文</a>
     ·
-    <a href="https://github.com/yoshikizh/nini/maste/README-en.md/">English</a>
+    <a href="https://github.com/yoshikizh/nini/blob/master/README-en.md">English</a>
   </p>
 </p>
 
