@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      #container { width: 800px; height: 450px; margin: 45px auto; }
+      #canvas{ width: 800px; height: 450px; background-color: #000000;  }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="canvas" width="800" height="450"></canvas>
+    </div>
+    
+    <script src="./src/nini.js" type="text/javascript"></script>
+
+    <script>
+      (function(){
+
+        class MainScene extends SceneBase {
+          constructor(){
+
+            // 调用超类构造函数(必须)
+            super()
+
+            // 创建精灵 并设置位图
+            this.sp = new Sprite()
+            this.sp.bitmap = new Bitmap("./assets/images/nini_md.jpg")
+
+            // 设置坐标
+            this.sp.x = 0
+            this.sp.y = 0
+
+            // 刷新循环(必须)
+            this.loop()
+
+          }
+        }
+
+        // 初始化场景并跳转
+        SceneManage.go(MainScene)
+
+
+      })()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "nini",
+  "version": "0.0.1",
+  "description": "A Game Engine For Creating HTML5 Game, Very Easy and Fast",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoshikizh/nini.git"
+  },
+  "author": "yoshikizh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoshikizh/nini/issues"
+  },
+  "dependencies": {
+    "babel-cli": "6.26.0"
+  },
+  "homepage": "https://github.com/yoshikizh/nini#readme"
+}
