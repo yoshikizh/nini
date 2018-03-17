@@ -1,6 +1,8 @@
 <p align="center">
   <h3 align="center">nini</h3>
-
+  <a href="https://getbootstrap.com/">
+    <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=72 height=72>
+  </a>
   <p align="center">
     一个飞速构建HTML5的游戏框架, 飞的更高, 飞的更远!
     <br>
