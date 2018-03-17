@@ -11,7 +11,7 @@
       <canvas id="canvas" width="800" height="450"></canvas>
     </div>
     
-    <script src="./src/nini.es6.js" type="text/javascript"></script>
+    <script src="./bin/nini.js" type="text/javascript"></script>
 
     <script>
 
@@ -78,7 +78,7 @@
             // 角度变化 ( 每帧增加5度 )
             this.sp.angle = this.sp.angle + 10
 
-            // 计算图片最大半径
+            // 利用勾股定理 计算图片最大半径
             let width = this.sp.bitmap.width
             let height = this.sp.bitmap.height
             let distance = Math.sqrt(Math.pow(width * this.sp.scale,2) +  Math.pow(height * this.sp.scale,2)) * 0.5
