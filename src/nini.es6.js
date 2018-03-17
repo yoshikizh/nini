@@ -44,17 +44,15 @@ class Graphics {
         let _ctx_ox = _x + sprite.ox * bitmap.width
         let _ctx_oy = _y + sprite.oy * bitmap.height
 
-
-
-        // this.ctx.translate(_ctx_ox,_ctx_oy)
-        // this.ctx.rotate(sprite.angle*Math.PI/180);
-        // this.ctx.translate(-_ctx_ox,-_ctx_oy)
+        this.ctx.save()
+        this.ctx.translate(_ctx_ox,_ctx_oy)
+        this.ctx.rotate(sprite.angle*Math.PI/180);
+        this.ctx.translate(-_ctx_ox,-_ctx_oy)
         this.ctx.drawImage( bitmap.img ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width, bitmap.height )
 
-        // this.ctx.rotate(0)
-        // this.ctx.globalAlpha = 1
-
-
+        this.ctx.rotate(0)
+        this.ctx.globalAlpha = 1
+        this.ctx.restore()
       }
 
     })
