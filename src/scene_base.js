@@ -15,3 +15,4 @@ class SceneBase {
     Graphics.update()
   }
 }
+

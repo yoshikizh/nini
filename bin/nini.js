@@ -10,6 +10,10 @@ Math.rand = function (max) {
   return Math.floor(max * Math.random());
 };
 
+Array.prototype.clear = function () {
+  this.splice(0, this.length);
+};
+
 var Rect = function () {
   function Rect(x, y, width, height) {
     _classCallCheck(this, Rect);
@@ -190,6 +194,7 @@ var Graphics = function () {
   _createClass(Graphics, null, [{
     key: 'init',
     value: function init(canvas) {
+      this.initialized = true;
       this.ctx = canvas.getContext('2d');
       this.sprites = [];
     }
@@ -243,14 +248,12 @@ var Graphics = function () {
   }, {
     key: 'clearSprites',
     value: function clearSprites() {
-      this.sprites = [];
+      this.sprites.clear();
     }
   }]);
 
   return Graphics;
 }();
-
-Graphics.init(canvas);
 
 var SceneBase = function () {
   function SceneBase() {
@@ -288,6 +291,18 @@ var SceneManage = function () {
   }, {
     key: 'go',
     value: function go(scene) {
+
+      if (!Graphics.initialized) {
+        var _canvas = document.getElementById(Graphics.canvas_id);
+        if (!_canvas) {
+          throw new Error('init canvas failed');
+          return;
+        }
+        Graphics.init(_canvas);
+        // Graphics.initialized = true
+      } else {
+        Graphics.clearSprites();
+      }
       this.scene = new scene();
     }
   }]);

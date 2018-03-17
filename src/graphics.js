@@ -1,6 +1,7 @@
 class Graphics {
 
   static init(canvas) {
+    this.initialized = true
     this.ctx = canvas.getContext('2d')
     this.sprites = []
   }
@@ -51,9 +52,9 @@ class Graphics {
   }
 
   static clearSprites(){
-    this.sprites = []
+    this.sprites.clear()
   }
 
 }
-Graphics.init(canvas)
+
 

@@ -2,6 +2,10 @@ Math.rand = function(max) {
   return Math.floor(max * Math.random())
 }
 
+Array.prototype.clear = function() {
+  this.splice(0,this.length)
+}
+
 class Rect{
   constructor(x,y,width,height){
     this.x = x
@@ -111,6 +115,7 @@ class Sprite {
 class Graphics {
 
   static init(canvas) {
+    this.initialized = true
     this.ctx = canvas.getContext('2d')
     this.sprites = []
   }
@@ -161,11 +166,11 @@ class Graphics {
   }
 
   static clearSprites(){
-    this.sprites = []
+    this.sprites.clear()
   }
 
 }
-Graphics.init(canvas)
+
 
 class SceneBase {
 
@@ -184,12 +189,26 @@ class SceneBase {
     Graphics.update()
   }
 }
+
 class SceneManage {
   static init(){
     this.scene = null
   }
 
   static go(scene){
+
+    if ( !Graphics.initialized ) {
+      let canvas = document.getElementById(Graphics.canvas_id)
+      if (!canvas) {
+        throw new Error('init canvas failed')
+        return
+      }
+      Graphics.init(canvas)
+      // Graphics.initialized = true
+
+    } else {
+      Graphics.clearSprites()
+    }
     this.scene = new scene()
   }
 }
