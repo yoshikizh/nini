@@ -1,10 +1,13 @@
 <p align="center">
   <h3 align="center">nini</h3>
-  <a href="#">
-    <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=240 height=334>
-  </a>
+  
   <p align="center">
-    A Game Engine For Creating HTML5 Game, Very Easy and Fast !
+    <a href="#">
+      <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=240 height=334>
+    </a>
+  </p>
+  <p align="center">
+    一个飞速构建HTML5的游戏框架, 飞的更高, 飞的更远!
     <br>
     <br>
     <a href="https://github.com/yoshikizh/nini">简体中文</a>
