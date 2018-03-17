@@ -1,7 +1,7 @@
 <p align="center">
   <h3 align="center">nini</h3>
-  <a href="https://getbootstrap.com/">
-    <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=72 height=72>
+  <a href="#">
+    <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=240 height=334>
   </a>
   <p align="center">
     A Game Engine For Creating HTML5 Game, Very Easy and Fast !
