@@ -1,6 +1,6 @@
 <p align="center">
   <h3 align="center">nini</h3>
-  
+
   <p align="center">
     <a href="#">
       <img src="http://assets.twk2nd.com/temp/nini_md.jpg" alt="" width=240 height=334>
@@ -69,6 +69,19 @@ class MainScene extends SceneBase {
     this.loop()
 
   }
+
+  // 定义update方法 实现动画的基础
+  update(){
+
+    // 调用父类的update(必须)
+    super.update()
+
+    // 改变坐标
+    this.sp.x++
+    this.sp.y++
+
+  }
+
 }
 
 // 初始化场景并跳转
@@ -91,8 +104,10 @@ Sprite 和 Bitmap 是 nini 重要的组成部分, 他们负责加载图片并将
 他们两者不是强耦合, Bitmap 可以作为已加载的资源单独存在, 供Sprite使用
 Sprite 主要设置图片在场景中的属性 ( 如坐标位置，角度，缩放比例，透明度等 )
 
-## 场景
-未完待续
+## 场景Scene
+
+场景是游戏的基础，nini 默认将场景进行极简地包装，只要继承 `SceneBase` 并在构造函数内设置精灵， update 内实现精灵动画效果 
+
 
 ## 动画
 未完待续
