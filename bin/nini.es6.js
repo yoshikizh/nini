@@ -169,8 +169,6 @@ Graphics.init(canvas)
 
 class SceneBase {
 
-  constructor(){ alert(123) }
-
   loop(){
 
     this.update()

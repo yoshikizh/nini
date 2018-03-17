@@ -255,8 +255,6 @@ Graphics.init(canvas);
 var SceneBase = function () {
   function SceneBase() {
     _classCallCheck(this, SceneBase);
-
-    alert(123);
   }
 
   _createClass(SceneBase, [{
