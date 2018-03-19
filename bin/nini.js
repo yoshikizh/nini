@@ -4,6 +4,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 Math.rand = function (max) {
@@ -29,6 +31,11 @@ var Rect = function () {
     value: function toArray() {
       return [this.x, this.y, this.width, this.height];
     }
+  }, {
+    key: 'isValid',
+    value: function isValid() {
+      return this.x >= 0 && this.y >= 0 && this.width > 0 && this.height > 0;
+    }
   }]);
 
   return Rect;
@@ -53,27 +60,77 @@ var Viewport = function Viewport(obj) {
   this.rect = obj;
 };
 
-var Bitmap = function Bitmap(obj) {
-  var _this = this;
+var Bitmap = function () {
+  function Bitmap(obj) {
+    var _this = this;
 
-  _classCallCheck(this, Bitmap);
+    _classCallCheck(this, Bitmap);
 
-  if (typeof obj === 'string') {
-    this.img = new Image();
-    this.img.src = obj;
+    if (typeof obj === 'string') {
+      this.img = new Image();
+      this.img.src = obj;
+      this.font = null;
 
-    this.img.onload = function () {
-      _this.width = _this.img.width;
-      _this.height = _this.img.height;
-    };
+      this.img.onload = function () {
+        _this.width = _this.img.width;
+        _this.height = _this.img.height;
+      };
+    }
+
+    if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
+      this.width = obj.width;
+      this.height = obj.height;
+    }
   }
 
-  if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
-    this.width = obj.width;
-    this.height = obj.height;
+  _createClass(Bitmap, null, [{
+    key: 'drawText',
+    value: function drawText(rect, str) {
+      var align = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+    }
+  }, {
+    key: 'bltImage',
+    value: function bltImage(dx, dy, src_bitmap, src_rect) {
+      if (src_rect.isValid()) {
+        var _Graphics$ctx;
+
+        Graphics.ctx.globalCompositeOperation = 'source-over';
+        (_Graphics$ctx = Graphics.ctx).drawImage.apply(_Graphics$ctx, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
+      }
+    }
+  }, {
+    key: 'stretchBltImage',
+    value: function stretchBltImage(src_bitmap, src_rect, dest_rect) {
+      if (src_rect.isValid() && dest_rect.width > 0 && dest_rect.height > 0 && src_rect.x + src_rect.width <= src_bitmap.width && src_rect.y + src_rect.height <= src_bitmap.height) {
+        var _Graphics$ctx2;
+
+        Graphics.ctx.globalCompositeOperation = 'source-over';
+        (_Graphics$ctx2 = Graphics.ctx).drawImage.apply(_Graphics$ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
+      }
+    }
+  }, {
+    key: 'fillRect',
+    value: function fillRect(rect, color) {}
+  }, {
+    key: 'clear',
+    value: function clear() {}
+  }, {
+    key: 'clearRect',
+    value: function clearRect(rect) {}
+  }]);
+
+  return Bitmap;
+}();
+
+Bitmap.prototype.bltImage = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
+  dw = dw || sw;
+  dh = dh || sh;
+  if (sx >= 0 && sy >= 0 && sw > 0 && sh > 0 && dw > 0 && dh > 0 && sx + sw <= source.width && sy + sh <= source.height) {
+    this._context.globalCompositeOperation = 'source-over';
+    this._context.drawImage(source._image, sx, sy, sw, sh, dx, dy, dw, dh);
+    this._setDirty();
   }
 };
-
 var Sprite = function () {
   function Sprite() {
     var viewport = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -196,6 +253,8 @@ var Graphics = function () {
     value: function init(canvas) {
       this.initialized = true;
       this.ctx = canvas.getContext('2d');
+      this.width = canvas.width;
+      this.height = canvas.height;
       this.sprites = [];
     }
   }, {
@@ -225,10 +284,7 @@ var Graphics = function () {
           _this2.ctx.translate(_ctx_ox, _ctx_oy);
           _this2.ctx.rotate(sprite.angle * Math.PI / 180);
           _this2.ctx.translate(-_ctx_ox, -_ctx_oy);
-          // this.ctx.scale(sprite.scale,sprite.scale);
-          // this.ctx.fillStyle = "red"
           _this2.ctx.drawImage(bitmap.img, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
-          // this.ctx.scale(1,1);
           _this2.ctx.rotate(0);
           _this2.ctx.globalAlpha = 1;
           _this2.ctx.restore();

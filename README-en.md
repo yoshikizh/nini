@@ -15,7 +15,7 @@
     <a href="https://github.com/yoshikizh/nini/blob/master/README-en.md">English</a>
   </p>
   <p align="center">
-    <h3 align="center"><a href="http://twk2nd-assets.oss-cn-shanghai.aliyuncs.com/nini/index.html" target="_blank">点击查看DEMO</a></h3>
+    <h3 align="center"><a href="http://assets.twk2nd.com/nini/index.html" target="_blank">点击查看DEMO</a></h3>
   </p>
 </p>
 

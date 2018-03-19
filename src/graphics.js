@@ -3,6 +3,8 @@ class Graphics {
   static init(canvas) {
     this.initialized = true
     this.ctx = canvas.getContext('2d')
+    this.width = canvas.width
+    this.height = canvas.height
     this.sprites = []
   }
 
@@ -30,10 +32,7 @@ class Graphics {
         this.ctx.translate(_ctx_ox,_ctx_oy)
         this.ctx.rotate(sprite.angle*Math.PI/180);
         this.ctx.translate(-_ctx_ox,-_ctx_oy)
-        // this.ctx.scale(sprite.scale,sprite.scale);
-        // this.ctx.fillStyle = "red"
         this.ctx.drawImage( bitmap.img ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
-        // this.ctx.scale(1,1);
         this.ctx.rotate(0)
         this.ctx.globalAlpha = 1
         this.ctx.restore()
