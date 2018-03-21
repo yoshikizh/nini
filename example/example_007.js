@@ -12,9 +12,6 @@ class SceneExample007 extends SceneBase {
     this.sp.x = Graphics.width / 2 - 32
     this.sp.y = 32
 
-    console.log(Graphics.width)
-    console.log(Graphics.height)
-
     // 设置坐标原点(中心)
     this.sp.ox = 1
     this.sp.oy = 0

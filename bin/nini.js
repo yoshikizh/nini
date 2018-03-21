@@ -71,15 +71,26 @@ var Bitmap = function () {
       this.img.src = obj;
       this.font = null;
 
+      // 兼容微信小游戏
+      this._canvas = (typeof wx === 'undefined' ? 'undefined' : _typeof(wx)) === 'object' ? wx.createCanvas() : document.createElement('canvas');
+      this._ctx = this._canvas.getContext('2d');
+
       this.img.onload = function () {
         _this.width = _this.img.width;
         _this.height = _this.img.height;
+
+        _this._canvas.width = _this.width;
+        _this._canvas.height = _this.height;
+
+        _this._ctx.drawImage(_this.img, 0, 0, _this.width, _this.height, 0, 0, _this.width, _this.height);
       };
     }
 
     if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
       this.width = obj.width;
       this.height = obj.height;
+      this._canvas.width = Math.max(this.width || 0, 1);
+      this._canvas.height = Math.max(this.height || 0, 1);
     }
   }
 
@@ -349,13 +360,15 @@ var SceneManage = function () {
     value: function go(scene) {
 
       if (!Graphics.initialized) {
-        var _canvas = document.getElementById(Graphics.canvas_id);
+
+        // 兼容微信小游戏则无需 canvas_id
+        var _canvas = (typeof wx === 'undefined' ? 'undefined' : _typeof(wx)) === 'object' ? wx.createCanvas() : document.getElementById(Graphics.canvas_id);
+
         if (!_canvas) {
           throw new Error('init canvas failed');
           return;
         }
         Graphics.init(_canvas);
-        // Graphics.initialized = true
       } else {
         Graphics.clearSprites();
       }

@@ -5,7 +5,6 @@ Math.rand = function(max) {
 Array.prototype.clear = function() {
   this.splice(0,this.length)
 }
-
 class Rect{
   constructor(x,y,width,height){
     this.x = x
@@ -54,15 +53,27 @@ class Bitmap {
       this.img.src = obj
       this.font = null
 
+      // 兼容微信小游戏
+      this._canvas = typeof(wx) === 'object' ? wx.createCanvas() : document.createElement('canvas')
+      this._ctx = this._canvas.getContext('2d')
+
       this.img.onload = ()=>{
         this.width  = this.img.width
         this.height = this.img.height
+
+        this._canvas.width = this.width
+        this._canvas.height = this.height
+
+        this._ctx.drawImage(this.img, 0,0,this.width,this.height,0,0,this.width,this.height)
       }
     }
 
     if ( typeof(obj) === 'object' ) {
       this.width  = obj.width
       this.height = obj.height
+      this._canvas.width = Math.max(this.width || 0, 1)
+      this._canvas.height = Math.max(this.height || 0, 1)
+
     }
   }
 
@@ -85,8 +96,6 @@ class Bitmap {
       Graphics.ctx.globalCompositeOperation = 'source-over'
       Graphics.ctx.drawImage(src_bitmap.img, ...src_rect.toArray(), ...dest_rect.toArray())
 
-
-
     }
   }
 
@@ -102,8 +111,6 @@ class Bitmap {
   static clearRect(rect) {
 
   }
-
-
 
 }
 
@@ -249,13 +256,15 @@ class SceneManage {
   static go(scene){
 
     if ( !Graphics.initialized ) {
-      let canvas = document.getElementById(Graphics.canvas_id)
+
+      // 兼容微信小游戏则无需 canvas_id
+      let canvas = typeof(wx) === 'object' ? wx.createCanvas() : document.getElementById(Graphics.canvas_id)
+
       if (!canvas) {
         throw new Error('init canvas failed')
         return
       }
       Graphics.init(canvas)
-      // Graphics.initialized = true
 
     } else {
       Graphics.clearSprites()

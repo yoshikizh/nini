@@ -6,13 +6,15 @@ class SceneManage {
   static go(scene){
 
     if ( !Graphics.initialized ) {
-      let canvas = document.getElementById(Graphics.canvas_id)
+
+      // 兼容微信小游戏则无需 canvas_id
+      let canvas = typeof(wx) === 'object' ? wx.createCanvas() : document.getElementById(Graphics.canvas_id)
+
       if (!canvas) {
         throw new Error('init canvas failed')
         return
       }
       Graphics.init(canvas)
-      // Graphics.initialized = true
 
     } else {
       Graphics.clearSprites()
