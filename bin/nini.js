@@ -66,14 +66,14 @@ var Bitmap = function () {
 
     _classCallCheck(this, Bitmap);
 
+    // 兼容微信小游戏
+    this._canvas = (typeof wx === 'undefined' ? 'undefined' : _typeof(wx)) === 'object' ? wx.createCanvas() : document.createElement('canvas');
+    this._ctx = this._canvas.getContext('2d');
+    this.font = null;
+
     if (typeof obj === 'string') {
       this.img = new Image();
       this.img.src = obj;
-      this.font = null;
-
-      // 兼容微信小游戏
-      this._canvas = (typeof wx === 'undefined' ? 'undefined' : _typeof(wx)) === 'object' ? wx.createCanvas() : document.createElement('canvas');
-      this._ctx = this._canvas.getContext('2d');
 
       this.img.onload = function () {
         _this.width = _this.img.width;
@@ -94,7 +94,7 @@ var Bitmap = function () {
     }
   }
 
-  _createClass(Bitmap, null, [{
+  _createClass(Bitmap, [{
     key: 'drawText',
     value: function drawText(rect, str) {
       var align = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
@@ -103,20 +103,20 @@ var Bitmap = function () {
     key: 'bltImage',
     value: function bltImage(dx, dy, src_bitmap, src_rect) {
       if (src_rect.isValid()) {
-        var _Graphics$ctx;
+        var _ctx;
 
-        Graphics.ctx.globalCompositeOperation = 'source-over';
-        (_Graphics$ctx = Graphics.ctx).drawImage.apply(_Graphics$ctx, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
+        this._ctx.globalCompositeOperation = 'source-over';
+        (_ctx = this._ctx).drawImage.apply(_ctx, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
       }
     }
-  }, {
+  }], [{
     key: 'stretchBltImage',
     value: function stretchBltImage(src_bitmap, src_rect, dest_rect) {
       if (src_rect.isValid() && dest_rect.width > 0 && dest_rect.height > 0 && src_rect.x + src_rect.width <= src_bitmap.width && src_rect.y + src_rect.height <= src_bitmap.height) {
-        var _Graphics$ctx2;
+        var _ctx2;
 
-        Graphics.ctx.globalCompositeOperation = 'source-over';
-        (_Graphics$ctx2 = Graphics.ctx).drawImage.apply(_Graphics$ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
+        this._ctx.globalCompositeOperation = 'source-over';
+        (_ctx2 = this._ctx).drawImage.apply(_ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
       }
     }
   }, {
@@ -133,15 +133,6 @@ var Bitmap = function () {
   return Bitmap;
 }();
 
-Bitmap.prototype.bltImage = function (source, sx, sy, sw, sh, dx, dy, dw, dh) {
-  dw = dw || sw;
-  dh = dh || sh;
-  if (sx >= 0 && sy >= 0 && sw > 0 && sh > 0 && dw > 0 && dh > 0 && sx + sw <= source.width && sy + sh <= source.height) {
-    this._context.globalCompositeOperation = 'source-over';
-    this._context.drawImage(source._image, sx, sy, sw, sh, dx, dy, dw, dh);
-    this._setDirty();
-  }
-};
 var Sprite = function () {
   function Sprite() {
     var viewport = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -295,7 +286,9 @@ var Graphics = function () {
           _this2.ctx.translate(_ctx_ox, _ctx_oy);
           _this2.ctx.rotate(sprite.angle * Math.PI / 180);
           _this2.ctx.translate(-_ctx_ox, -_ctx_oy);
-          _this2.ctx.drawImage(bitmap.img, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+
+          _this2.ctx.drawImage(bitmap._canvas, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+
           _this2.ctx.rotate(0);
           _this2.ctx.globalAlpha = 1;
           _this2.ctx.restore();

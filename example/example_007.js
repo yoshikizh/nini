@@ -8,6 +8,10 @@ class SceneExample007 extends SceneBase {
     this.sp = new Sprite()
     this.sp.bitmap = new Bitmap('./assets/images/nini_md.jpg')
 
+    // 目标精灵用于裁剪(为了方便创建跟显示画布同样的大小)
+    this.sp2 = new Sprite()
+    this.sp2.bitmap = new Bitmap({width: Graphics.width, height: Graphics.height})
+
     // 设置坐标为画面中心
     this.sp.x = Graphics.width / 2 - 32
     this.sp.y = 32
@@ -40,7 +44,7 @@ class SceneExample007 extends SceneBase {
       let c1 = parseInt(i / 3)
       let c2 = parseInt(i % 3)
 
-      Bitmap.bltImage(offset_x + (rw + 10)*c2, offset_y + (rh + 10)*c1, this.sp.bitmap , new Rect(rw*c2,rh*c1,rw,rh))
+      this.sp2.bitmap.bltImage(offset_x + (rw + 10)*c2, offset_y + (rh + 10)*c1, this.sp.bitmap , new Rect(rw*c2,rh*c1,rw,rh))
     }
 
   }

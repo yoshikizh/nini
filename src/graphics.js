@@ -32,7 +32,9 @@ class Graphics {
         this.ctx.translate(_ctx_ox,_ctx_oy)
         this.ctx.rotate(sprite.angle*Math.PI/180);
         this.ctx.translate(-_ctx_ox,-_ctx_oy)
-        this.ctx.drawImage( bitmap.img ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
+        
+        this.ctx.drawImage( bitmap._canvas ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
+
         this.ctx.rotate(0)
         this.ctx.globalAlpha = 1
         this.ctx.restore()
