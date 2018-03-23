@@ -86,6 +86,8 @@ var Bitmap = function () {
       };
     }
 
+    console.log(typeof obj === 'undefined' ? 'undefined' : _typeof(obj));
+
     if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
       this.width = obj.width;
       this.height = obj.height;
@@ -97,26 +99,63 @@ var Bitmap = function () {
   _createClass(Bitmap, [{
     key: 'drawText',
     value: function drawText(rect, str) {
-      var align = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+      var _ctx;
+
+      var align = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+
+      // Todo 自定义字体&字号 ...
+      var font_name = 'Arial';
+      var font_size = 32;
+      var font_height = 32;
+
+      this._ctx.save();
+
+      (_ctx = this._ctx).rect.apply(_ctx, _toConsumableArray(rect.toArray()));
+      this._ctx.clip();
+
+      this._ctx.fillStyle = "#ffffff";
+      this._ctx.font = font_size + 'px ' + font_name;
+
+      this._ctx.textAlign = ['left', 'center', 'right'][align];
+
+      var str_width = this._ctx.measureText(str).width;
+
+      var x = rect.x;
+      if (this._ctx.textAlign === 'left') {
+        var _x3 = rect.x;
+      }
+      if (this._ctx.textAlign === 'center') {
+        x = rect.x + (rect.width + str_width) / 2 - str_width / 2;
+        console.log(x);
+      }
+      if (this._ctx.textAlign === 'right') {
+        x = rect.x + (rect.width + str_width - str_width);
+      }
+
+      // Tip canvas 获取不到字高，默认字高为字号大小的 90%
+      this._ctx.fillText(str, x, rect.y + font_height * 0.9, rect.width);
+
+      this._ctx.restore();
     }
   }, {
     key: 'bltImage',
     value: function bltImage(dx, dy, src_bitmap, src_rect) {
       if (src_rect.isValid()) {
-        var _ctx;
+        var _ctx2;
 
         this._ctx.globalCompositeOperation = 'source-over';
-        (_ctx = this._ctx).drawImage.apply(_ctx, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
+        (_ctx2 = this._ctx).drawImage.apply(_ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
       }
     }
   }], [{
     key: 'stretchBltImage',
     value: function stretchBltImage(src_bitmap, src_rect, dest_rect) {
       if (src_rect.isValid() && dest_rect.width > 0 && dest_rect.height > 0 && src_rect.x + src_rect.width <= src_bitmap.width && src_rect.y + src_rect.height <= src_bitmap.height) {
-        var _ctx2;
+        var _ctx3;
 
         this._ctx.globalCompositeOperation = 'source-over';
-        (_ctx2 = this._ctx).drawImage.apply(_ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
+        (_ctx3 = this._ctx).drawImage.apply(_ctx3, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
       }
     }
   }, {

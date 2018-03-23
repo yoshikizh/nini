@@ -69,6 +69,8 @@ class Bitmap {
       }
     }
 
+    console.log(typeof(obj))
+
     if ( typeof(obj) === 'object' ) {
       this.width  = obj.width
       this.height = obj.height
@@ -77,8 +79,41 @@ class Bitmap {
     }
   }
 
-  drawText(rect, str, align = 1) {
+  drawText(rect, str, align = 0) {
 
+    // Todo 自定义字体&字号 ...
+    let font_name = 'Arial'
+    let font_size = 32
+    let font_height = 32
+
+    this._ctx.save()
+
+    this._ctx.rect( ...rect.toArray() )
+    this._ctx.clip()
+
+    this._ctx.fillStyle = "#ffffff"
+    this._ctx.font    = `${font_size}px ${font_name}`
+
+    this._ctx.textAlign = ['left', 'center', 'right'][align]
+
+    let str_width = this._ctx.measureText(str).width
+
+    let x = rect.x
+    if ( this._ctx.textAlign === 'left' ) {
+      let x = rect.x
+    }
+    if ( this._ctx.textAlign === 'center' ) {
+      x = rect.x + (rect.width+str_width) / 2 - str_width / 2
+      console.log(x)
+    }
+    if ( this._ctx.textAlign === 'right' ) {
+      x = rect.x + ( (rect.width+str_width) - str_width )
+    }
+
+    // Tip canvas 获取不到字高，默认字高为字号大小的 90%
+    this._ctx.fillText(str,x, rect.y + font_height * 0.9, rect.width)
+
+    this._ctx.restore()
   }
 
   bltImage(dx, dy ,src_bitmap , src_rect) {
