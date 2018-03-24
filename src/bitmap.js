@@ -5,7 +5,7 @@ class Bitmap {
     // 兼容微信小游戏
     this._canvas = typeof(wx) === 'object' ? wx.createCanvas() : document.createElement('canvas')
     this._ctx = this._canvas.getContext('2d')
-    this.font = null
+    this.font = new Font()
 
     if ( typeof(obj) === 'string' ) {
       this.img = new Image()
@@ -35,16 +35,18 @@ class Bitmap {
   drawText(rect, str, align = 0) {
 
     // Todo 自定义字体&字号 ...
-    let font_name = 'Arial'
-    let font_size = 32
-    let font_height = 32
+    let font_name = this.font.name
+    let font_size = this.font.size
+
+    // Tip canvas 获取不到字高，默认字高为字号大小的 90%
+    let font_height = this.font.size * 0.9
 
     this._ctx.save()
 
     this._ctx.rect( ...rect.toArray() )
     this._ctx.clip()
 
-    this._ctx.fillStyle = "#ffffff"
+    this._ctx.fillStyle = this.font.color.toRgbHex()
     this._ctx.font    = `${font_size}px ${font_name}`
 
     this._ctx.textAlign = ['left', 'center', 'right'][align]
@@ -63,8 +65,7 @@ class Bitmap {
       x = rect.x + ( (rect.width+str_width) - str_width )
     }
 
-    // Tip canvas 获取不到字高，默认字高为字号大小的 90%
-    this._ctx.fillText(str,x, rect.y + font_height * 0.9, rect.width)
+    this._ctx.fillText(str,x, rect.y + font_height, rect.width)
 
     this._ctx.restore()
   }
@@ -86,7 +87,6 @@ class Bitmap {
 
     }
   }
-
 
   static fillRect(rect, color) {
 

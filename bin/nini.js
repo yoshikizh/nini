@@ -41,13 +41,42 @@ var Rect = function () {
   return Rect;
 }();
 
-var Color = function Color(r, g, b, a) {
-  _classCallCheck(this, Color);
+var Color = function () {
+  function Color(r, g, b) {
+    var a = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 255;
 
-  this.red = r;
-  this.green = g;
-  this.blue = b;
-  this.alpha = a;
+    _classCallCheck(this, Color);
+
+    this.red = r;
+    this.green = g;
+    this.blue = b;
+    this.alpha = a;
+  }
+
+  _createClass(Color, [{
+    key: 'toRgbHex',
+    value: function toRgbHex() {
+      var _red = this.red.toString(16);
+      var _green = this.green.toString(16);
+      var _blue = this.blue.toString(16);
+
+      if (_red < 16) _red = '0' + _red;
+      if (_green < 16) _green = '0' + _green;
+      if (_blue < 16) _blue = '0' + _blue;
+
+      return '#' + _red + _green + _blue;
+    }
+  }]);
+
+  return Color;
+}();
+
+var Font = function Font() {
+  _classCallCheck(this, Font);
+
+  this.name = 'Arial';
+  this.color = new Color(255, 255, 255);
+  this.size = 16;
 };
 
 var Viewport = function Viewport(obj) {
@@ -69,7 +98,7 @@ var Bitmap = function () {
     // 兼容微信小游戏
     this._canvas = (typeof wx === 'undefined' ? 'undefined' : _typeof(wx)) === 'object' ? wx.createCanvas() : document.createElement('canvas');
     this._ctx = this._canvas.getContext('2d');
-    this.font = null;
+    this.font = new Font();
 
     if (typeof obj === 'string') {
       this.img = new Image();
@@ -105,16 +134,18 @@ var Bitmap = function () {
 
 
       // Todo 自定义字体&字号 ...
-      var font_name = 'Arial';
-      var font_size = 32;
-      var font_height = 32;
+      var font_name = this.font.name;
+      var font_size = this.font.size;
+
+      // Tip canvas 获取不到字高，默认字高为字号大小的 90%
+      var font_height = this.font.size * 0.9;
 
       this._ctx.save();
 
       (_ctx = this._ctx).rect.apply(_ctx, _toConsumableArray(rect.toArray()));
       this._ctx.clip();
 
-      this._ctx.fillStyle = "#ffffff";
+      this._ctx.fillStyle = this.font.color.toRgbHex();
       this._ctx.font = font_size + 'px ' + font_name;
 
       this._ctx.textAlign = ['left', 'center', 'right'][align];
@@ -123,7 +154,7 @@ var Bitmap = function () {
 
       var x = rect.x;
       if (this._ctx.textAlign === 'left') {
-        var _x3 = rect.x;
+        var _x4 = rect.x;
       }
       if (this._ctx.textAlign === 'center') {
         x = rect.x + (rect.width + str_width) / 2 - str_width / 2;
@@ -133,8 +164,7 @@ var Bitmap = function () {
         x = rect.x + (rect.width + str_width - str_width);
       }
 
-      // Tip canvas 获取不到字高，默认字高为字号大小的 90%
-      this._ctx.fillText(str, x, rect.y + font_height * 0.9, rect.width);
+      this._ctx.fillText(str, x, rect.y + font_height, rect.width);
 
       this._ctx.restore();
     }

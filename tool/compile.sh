@@ -11,6 +11,7 @@ fi
 cat ./src/monkey_patches.js >> ./bin/nini.es6.js
 cat ./src/rect.js >> ./bin/nini.es6.js
 cat ./src/color.js >> ./bin/nini.es6.js
+cat ./src/font.js >> ./bin/nini.es6.js
 cat ./src/viewport.js >> ./bin/nini.es6.js
 cat ./src/bitmap.js >> ./bin/nini.es6.js
 cat ./src/sprite.js >> ./bin/nini.es6.js

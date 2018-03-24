@@ -8,14 +8,20 @@ class SceneExample008 extends SceneBase {
     this.sp = new Sprite()
     this.sp.bitmap = new Bitmap({ width: Graphics.width, height: Graphics.height })
 
-    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,32), "nini居左")
-    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,32), "nini居中", 1)
-    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,32), "nini居右", 2)
+    this.sp.bitmap.font.size = 64
+    this.sp.bitmap.font.color = new Color(255,0,0)
+    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,64), "nini居左")
+    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,64), "nini居中", 1)
+    this.sp.bitmap.drawText(new Rect(0,0,Graphics.width,64), "nini居右", 2)
 
-    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,32), "nini居左")
-    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,32), "nini居中", 1)
-    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,32), "nini居右", 2)
+    this.sp.bitmap.font.size = 48
+    this.sp.bitmap.font.color = new Color(0,255,0)
+    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,48), "nini居左")
+    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,48), "nini居中", 1)
+    this.sp.bitmap.drawText(new Rect(0,Graphics.height / 2 - 16,Graphics.width,48), "nini居右", 2)
 
+    this.sp.bitmap.font.size = 32
+    this.sp.bitmap.font.color = new Color(0,0,255)
     this.sp.bitmap.drawText(new Rect(0,Graphics.height - 32,Graphics.width,32), "nini居左")
     this.sp.bitmap.drawText(new Rect(0,Graphics.height - 32,Graphics.width,32), "nini居中", 1)
     this.sp.bitmap.drawText(new Rect(0,Graphics.height - 32,Graphics.width,32), "nini居右", 2)
