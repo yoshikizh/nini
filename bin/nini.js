@@ -90,7 +90,7 @@ var Viewport = function Viewport(obj) {
 };
 
 var Bitmap = function () {
-  function Bitmap(obj) {
+  function Bitmap(obj, callback) {
     var _this = this;
 
     _classCallCheck(this, Bitmap);
@@ -112,10 +112,12 @@ var Bitmap = function () {
         _this._canvas.height = _this.height;
 
         _this._ctx.drawImage(_this.img, 0, 0, _this.width, _this.height, 0, 0, _this.width, _this.height);
+
+        if (callback) {
+          callback();
+        }
       };
     }
-
-    console.log(typeof obj === 'undefined' ? 'undefined' : _typeof(obj));
 
     if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
       this.width = obj.width;
@@ -158,7 +160,6 @@ var Bitmap = function () {
       }
       if (this._ctx.textAlign === 'center') {
         x = rect.x + (rect.width + str_width) / 2 - str_width / 2;
-        console.log(x);
       }
       if (this._ctx.textAlign === 'right') {
         x = rect.x + (rect.width + str_width - str_width);
@@ -174,21 +175,22 @@ var Bitmap = function () {
       if (src_rect.isValid()) {
         var _ctx2;
 
+        console.log("有效");
         this._ctx.globalCompositeOperation = 'source-over';
         (_ctx2 = this._ctx).drawImage.apply(_ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
       }
     }
-  }], [{
+  }, {
     key: 'stretchBltImage',
     value: function stretchBltImage(src_bitmap, src_rect, dest_rect) {
-      if (src_rect.isValid() && dest_rect.width > 0 && dest_rect.height > 0 && src_rect.x + src_rect.width <= src_bitmap.width && src_rect.y + src_rect.height <= src_bitmap.height) {
+      if (src_rect.isValid()) {
         var _ctx3;
 
         this._ctx.globalCompositeOperation = 'source-over';
         (_ctx3 = this._ctx).drawImage.apply(_ctx3, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
       }
     }
-  }, {
+  }], [{
     key: 'fillRect',
     value: function fillRect(rect, color) {}
   }, {

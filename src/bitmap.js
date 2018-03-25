@@ -1,6 +1,6 @@
 class Bitmap {
 
-  constructor(obj){
+  constructor(obj, callback){
 
     // 兼容微信小游戏
     this._canvas = typeof(wx) === 'object' ? wx.createCanvas() : document.createElement('canvas')
@@ -19,10 +19,12 @@ class Bitmap {
         this._canvas.height = this.height
 
         this._ctx.drawImage(this.img, 0,0,this.width,this.height,0,0,this.width,this.height)
+
+        if ( callback ) {
+          callback()
+        }
       }
     }
-
-    console.log(typeof(obj))
 
     if ( typeof(obj) === 'object' ) {
       this.width  = obj.width
@@ -59,7 +61,6 @@ class Bitmap {
     }
     if ( this._ctx.textAlign === 'center' ) {
       x = rect.x + (rect.width+str_width) / 2 - str_width / 2
-      console.log(x)
     }
     if ( this._ctx.textAlign === 'right' ) {
       x = rect.x + ( (rect.width+str_width) - str_width )
@@ -77,14 +78,10 @@ class Bitmap {
     }
   }
 
-  static stretchBltImage(src_bitmap, src_rect, dest_rect) {
-    if ( src_rect.isValid() && dest_rect.width > 0 && dest_rect.height > 0 &&
-      src_rect.x + src_rect.width <= src_bitmap.width && 
-      src_rect.y + src_rect.height <= src_bitmap.height) {
-
+  stretchBltImage(src_bitmap, src_rect, dest_rect) {
+    if ( src_rect.isValid() ) {
       this._ctx.globalCompositeOperation = 'source-over'
-      this._ctx.drawImage(src_bitmap.img, ...src_rect.toArray(), ...dest_rect.toArray())
-
+      this._ctx.drawImage(src_bitmap.img, ...src_rect.toArray(), ...dest_rect.toArray() )
     }
   }
 

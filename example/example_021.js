@@ -1,4 +1,4 @@
-class SceneExample008 extends SceneBase {
+class SceneExample021 extends SceneBase {
   constructor(){
 
     // 调用超类构造函数(必须)

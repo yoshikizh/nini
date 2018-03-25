@@ -30,21 +30,24 @@
       <a href="javascript:;" onclick="goScene005()">透明度变换</a>
       |
       <a href="javascript:;" onclick="goScene006()">综合动画</a>
-      |
     </container>
 
     <div class="container mt10">
       <span class="linetitle">图片进阶</span>
       &nbsp;
-      <a href="javascript:;" onclick="goScene007()">裁剪图片</a>
-
+      <a href="javascript:;" onclick="goScene011()">裁剪图片</a>
+      |
+      <a href="javascript:;" onclick="goScene012()">缩放裁剪</a>
+      |
+      <a href="javascript:;" onclick="goScene013()">裁剪动画</a>
     </container>
 
     <div class="container mt10">
       <span class="linetitle">文字相关</span>
       &nbsp;
-      <a href="javascript:;" onclick="goScene008()">显示文字</a>
-
+      <a href="javascript:;" onclick="goScene021()">显示文字</a>
+      |
+      <a href="javascript:;" onclick="goScene022()">图片文字</a>
     </container>
 
     <script src="./bin/nini.js" type="text/javascript"></script>
@@ -54,8 +57,11 @@
     <script src="./example/example_004.js" type="text/javascript"></script>
     <script src="./example/example_005.js" type="text/javascript"></script>
     <script src="./example/example_006.js" type="text/javascript"></script>
-    <script src="./example/example_007.js" type="text/javascript"></script>
-    <script src="./example/example_008.js" type="text/javascript"></script>
+    <script src="./example/example_011.js" type="text/javascript"></script>
+    <script src="./example/example_012.js" type="text/javascript"></script>
+    <script src="./example/example_013.js" type="text/javascript"></script>
+    <script src="./example/example_021.js" type="text/javascript"></script>
+    <script src="./example/example_022.js" type="text/javascript"></script>
 
     <script>
 
@@ -66,8 +72,11 @@
       let goScene004 = ()=>{ SceneManage.go(SceneExample004) }
       let goScene005 = ()=>{ SceneManage.go(SceneExample005) }
       let goScene006 = ()=>{ SceneManage.go(SceneExample006) }
-      let goScene007 = ()=>{ SceneManage.go(SceneExample007) }
-      let goScene008 = ()=>{ SceneManage.go(SceneExample008) }
+      let goScene011 = ()=>{ SceneManage.go(SceneExample011) }
+      let goScene012 = ()=>{ SceneManage.go(SceneExample012) }
+      let goScene013 = ()=>{ SceneManage.go(SceneExample013) }
+      let goScene021 = ()=>{ SceneManage.go(SceneExample021) }
+      let goScene022 = ()=>{ SceneManage.go(SceneExample022) }
 
       // 配置 canvas id
       Graphics.canvas_id = 'canvas'
