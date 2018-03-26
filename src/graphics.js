@@ -5,11 +5,12 @@ class Graphics {
     this.ctx = canvas.getContext('2d')
     this.width = canvas.width
     this.height = canvas.height
+    this.frame_count = 0
     this.sprites = []
   }
 
   static update(){
-
+    this.frame_count++
     this.clearCtx()
 
     let bitmap = null

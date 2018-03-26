@@ -136,8 +136,6 @@ class Bitmap {
 
   bltImage(dx, dy ,src_bitmap , src_rect) {
     if ( src_rect.isValid() ) {
-
-      console.log("有效")
       this._ctx.globalCompositeOperation = 'source-over'
       this._ctx.drawImage(src_bitmap.img, ...src_rect.toArray(), dx, dy, src_rect.width, src_rect.height )
     }
@@ -148,6 +146,73 @@ class Bitmap {
       this._ctx.globalCompositeOperation = 'source-over'
       this._ctx.drawImage(src_bitmap.img, ...src_rect.toArray(), ...dest_rect.toArray() )
     }
+  }
+
+  changeHue(offset) {
+
+    if (offset && this.width > 0 && this.height > 0) {
+
+      let image_data = this._ctx.getImageData(0, 0, this.width, this.height)
+      let pix_data = image_data.data
+
+      let _rgbToHsl = (r, g, b)=> {
+        let cmin = Math.min(r, g, b)
+        let cmax = Math.max(r, g, b)
+        let h = 0
+        let s = 0
+        let l = (cmin + cmax) / 2
+        let delta = cmax - cmin
+
+        if (delta > 0) {
+          if (r === cmax) {
+            h = 60 * (((g - b) / delta + 6) % 6)
+          } else if (g === cmax) {
+            h = 60 * ((b - r) / delta + 2)
+          } else {
+            h = 60 * ((r - g) / delta + 4)
+          }
+          s = delta / (255 - Math.abs(2 * l - 255))
+        }
+        return [h, s, l]
+      }
+
+      let _hslToRgb = (h, s, l)=> {
+        let c = (255 - Math.abs(2 * l - 255)) * s
+        let x = c * (1 - Math.abs((h / 60) % 2 - 1))
+        let m = l - c / 2
+        let cm = c + m
+        let xm = x + m
+
+        if (h < 60) {
+          return [cm, xm, m]
+        } else if (h < 120) {
+          return [xm, cm, m]
+        } else if (h < 180) {
+          return [m, cm, xm]
+        } else if (h < 240) {
+          return [m, xm, cm]
+        } else if (h < 300) {
+          return [xm, m, cm]
+        } else {
+          return [cm, m, xm]
+        }
+      }
+
+      let _offset = ((offset % 360) + 360) % 360;
+
+      for (let i = 0; i < pix_data.length; i += 4) {
+          let hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2]);
+          let h = (hsl[0] + _offset) % 360;
+          let s = hsl[1];
+          let l = hsl[2];
+          let rgb = _hslToRgb(h, s, l);
+          pix_data[i + 0] = rgb[0];
+          pix_data[i + 1] = rgb[1];
+          pix_data[i + 2] = rgb[2];
+      }
+      this._ctx.putImageData(image_data, 0, 0);
+    }
+
   }
 
   static fillRect(rect, color) {
@@ -218,11 +283,12 @@ class Graphics {
     this.ctx = canvas.getContext('2d')
     this.width = canvas.width
     this.height = canvas.height
+    this.frame_count = 0
     this.sprites = []
   }
 
   static update(){
-
+    this.frame_count++
     this.clearCtx()
 
     let bitmap = null

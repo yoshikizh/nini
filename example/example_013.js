@@ -22,8 +22,6 @@ class SceneExample013 extends SceneBase {
 
         let src_rect = new Rect(dx, dy, w, h)
 
-        console.log(src_rect)
-
         sp.bitmap.bltImage(0, 0, this.origin_bitmap, src_rect)
         sp.ox = 0.5
         sp.oy = 0.5

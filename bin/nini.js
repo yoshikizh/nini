@@ -175,7 +175,6 @@ var Bitmap = function () {
       if (src_rect.isValid()) {
         var _ctx2;
 
-        console.log("有效");
         this._ctx.globalCompositeOperation = 'source-over';
         (_ctx2 = this._ctx).drawImage.apply(_ctx2, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), [dx, dy, src_rect.width, src_rect.height]));
       }
@@ -188,6 +187,73 @@ var Bitmap = function () {
 
         this._ctx.globalCompositeOperation = 'source-over';
         (_ctx3 = this._ctx).drawImage.apply(_ctx3, [src_bitmap.img].concat(_toConsumableArray(src_rect.toArray()), _toConsumableArray(dest_rect.toArray())));
+      }
+    }
+  }, {
+    key: 'changeHue',
+    value: function changeHue(offset) {
+
+      if (offset && this.width > 0 && this.height > 0) {
+
+        var image_data = this._ctx.getImageData(0, 0, this.width, this.height);
+        var pix_data = image_data.data;
+
+        var _rgbToHsl = function _rgbToHsl(r, g, b) {
+          var cmin = Math.min(r, g, b);
+          var cmax = Math.max(r, g, b);
+          var h = 0;
+          var s = 0;
+          var l = (cmin + cmax) / 2;
+          var delta = cmax - cmin;
+
+          if (delta > 0) {
+            if (r === cmax) {
+              h = 60 * (((g - b) / delta + 6) % 6);
+            } else if (g === cmax) {
+              h = 60 * ((b - r) / delta + 2);
+            } else {
+              h = 60 * ((r - g) / delta + 4);
+            }
+            s = delta / (255 - Math.abs(2 * l - 255));
+          }
+          return [h, s, l];
+        };
+
+        var _hslToRgb = function _hslToRgb(h, s, l) {
+          var c = (255 - Math.abs(2 * l - 255)) * s;
+          var x = c * (1 - Math.abs(h / 60 % 2 - 1));
+          var m = l - c / 2;
+          var cm = c + m;
+          var xm = x + m;
+
+          if (h < 60) {
+            return [cm, xm, m];
+          } else if (h < 120) {
+            return [xm, cm, m];
+          } else if (h < 180) {
+            return [m, cm, xm];
+          } else if (h < 240) {
+            return [m, xm, cm];
+          } else if (h < 300) {
+            return [xm, m, cm];
+          } else {
+            return [cm, m, xm];
+          }
+        };
+
+        var _offset = (offset % 360 + 360) % 360;
+
+        for (var i = 0; i < pix_data.length; i += 4) {
+          var hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2]);
+          var h = (hsl[0] + _offset) % 360;
+          var s = hsl[1];
+          var l = hsl[2];
+          var rgb = _hslToRgb(h, s, l);
+          pix_data[i + 0] = rgb[0];
+          pix_data[i + 1] = rgb[1];
+          pix_data[i + 2] = rgb[2];
+        }
+        this._ctx.putImageData(image_data, 0, 0);
       }
     }
   }], [{
@@ -328,6 +394,7 @@ var Graphics = function () {
       this.ctx = canvas.getContext('2d');
       this.width = canvas.width;
       this.height = canvas.height;
+      this.frame_count = 0;
       this.sprites = [];
     }
   }, {
@@ -335,6 +402,7 @@ var Graphics = function () {
     value: function update() {
       var _this2 = this;
 
+      this.frame_count++;
       this.clearCtx();
 
       var bitmap = null;
