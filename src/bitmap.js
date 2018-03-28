@@ -138,30 +138,33 @@ class Bitmap {
       let _offset = ((offset % 360) + 360) % 360;
 
       for (let i = 0; i < pix_data.length; i += 4) {
-          let hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2]);
-          let h = (hsl[0] + _offset) % 360;
-          let s = hsl[1];
-          let l = hsl[2];
-          let rgb = _hslToRgb(h, s, l);
-          pix_data[i + 0] = rgb[0];
-          pix_data[i + 1] = rgb[1];
-          pix_data[i + 2] = rgb[2];
+        let hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2])
+        let h = (hsl[0] + _offset) % 360
+        let s = hsl[1]
+        let l = hsl[2]
+        let rgb = _hslToRgb(h, s, l)
+        pix_data[i + 0] = rgb[0]
+        pix_data[i + 1] = rgb[1]
+        pix_data[i + 2] = rgb[2]
       }
-      this._ctx.putImageData(image_data, 0, 0);
+      this._ctx.putImageData(image_data, 0, 0)
     }
-
   }
 
-  static fillRect(rect, color) {
-
+  fillRect(rect, color) {
+    let ctx = this._ctx
+    ctx.save()
+    ctx.fillStyle = color.toRgbHex();
+    ctx.fillRect(...rect.toArray());
+    ctx.restore()
   }
 
-  static clear(){
-
+  clearRect(rect) {
+    this._ctx.clearRect(...rect.toArray());
   }
 
-  static clearRect(rect) {
-
+  clear(){
+    this.clearRect(new Rect(0, 0, this.width, this.height));
   }
 
 }
