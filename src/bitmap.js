@@ -52,7 +52,7 @@ class Bitmap {
   }
 
   drawText(rect, str, align = 0) {
-    
+
     // 计算字高
     let font_height = rect.height - (rect.height - this.font.size * 0.7) / 2
     let str_width = this._measureTextWidth(str)
@@ -167,6 +167,10 @@ class Bitmap {
     ctx.fillStyle = color.toRgbHex();
     ctx.fillRect(...rect.toArray());
     ctx.restore()
+  }
+
+  fillAll = function(color) {
+    this.fillRect(new Rect(0, 0, this.width, this.height), color.toRgbHex());
   }
 
   clearRect(rect) {
