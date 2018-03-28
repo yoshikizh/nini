@@ -34,22 +34,37 @@ class Bitmap {
     }
   }
 
-  drawText(rect, str, align = 0) {
+  // private
+  _measureTextWidth(str) {
+    let ctx = this._ctx
+    ctx.save()
+    ctx.font = this._makeFontCssFormat()
+    let width = ctx.measureText(str).width
+    ctx.restore()
+    return width
+  }
 
-    // Todo 自定义字体&字号 ...
+  // private
+  _makeFontCssFormat() {
     let font_name = this.font.name
     let font_size = this.font.size
+    return `${font_size}px ${font_name}`
+  }
 
+  drawText(rect, str, align = 0) {
+    
     // 计算字高
     let font_height = rect.height - (rect.height - this.font.size * 0.7) / 2
-    let str_width = this._ctx.measureText(str).width
+    let str_width = this._measureTextWidth(str)
 
     this._ctx.save()
     this._ctx.rect( ...rect.toArray() )
     this._ctx.clip()
     this._ctx.fillStyle = this.font.color.toRgbHex()
-    this._ctx.font    = `${font_size}px ${font_name}`
+    this._ctx.font      = this._makeFontCssFormat()
     this._ctx.textAlign = ['left', 'center', 'right'][align]
+    this._ctx.textBaseline = 'alphabetic'
+
 
     let x = rect.x
     let y = rect.y + font_height

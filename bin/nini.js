@@ -127,7 +127,30 @@ var Bitmap = function () {
     }
   }
 
+  // private
+
+
   _createClass(Bitmap, [{
+    key: '_measureTextWidth',
+    value: function _measureTextWidth(str) {
+      var ctx = this._ctx;
+      ctx.save();
+      ctx.font = this._makeFontCssFormat();
+      var width = ctx.measureText(str).width;
+      ctx.restore();
+      return width;
+    }
+
+    // private
+
+  }, {
+    key: '_makeFontCssFormat',
+    value: function _makeFontCssFormat() {
+      var font_name = this.font.name;
+      var font_size = this.font.size;
+      return font_size + 'px ' + font_name;
+    }
+  }, {
     key: 'drawText',
     value: function drawText(rect, str) {
       var _ctx;
@@ -135,20 +158,17 @@ var Bitmap = function () {
       var align = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
 
-      // Todo 自定义字体&字号 ...
-      var font_name = this.font.name;
-      var font_size = this.font.size;
-
       // 计算字高
       var font_height = rect.height - (rect.height - this.font.size * 0.7) / 2;
-      var str_width = this._ctx.measureText(str).width;
+      var str_width = this._measureTextWidth(str);
 
       this._ctx.save();
       (_ctx = this._ctx).rect.apply(_ctx, _toConsumableArray(rect.toArray()));
       this._ctx.clip();
       this._ctx.fillStyle = this.font.color.toRgbHex();
-      this._ctx.font = font_size + 'px ' + font_name;
+      this._ctx.font = this._makeFontCssFormat();
       this._ctx.textAlign = ['left', 'center', 'right'][align];
+      this._ctx.textBaseline = 'alphabetic';
 
       var x = rect.x;
       var y = rect.y + font_height;
