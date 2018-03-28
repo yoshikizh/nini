@@ -139,22 +139,19 @@ var Bitmap = function () {
       var font_name = this.font.name;
       var font_size = this.font.size;
 
-      // Tip canvas 获取不到字高，默认字高为字号大小的 90%
-      var font_height = this.font.size * 0.9;
-
-      this._ctx.save();
-
-      (_ctx = this._ctx).rect.apply(_ctx, _toConsumableArray(rect.toArray()));
-      this._ctx.clip();
-
-      this._ctx.fillStyle = this.font.color.toRgbHex();
-      this._ctx.font = font_size + 'px ' + font_name;
-
-      this._ctx.textAlign = ['left', 'center', 'right'][align];
-
+      // 计算字高
+      var font_height = rect.height - (rect.height - this.font.size * 0.7) / 2;
       var str_width = this._ctx.measureText(str).width;
 
+      this._ctx.save();
+      (_ctx = this._ctx).rect.apply(_ctx, _toConsumableArray(rect.toArray()));
+      this._ctx.clip();
+      this._ctx.fillStyle = this.font.color.toRgbHex();
+      this._ctx.font = font_size + 'px ' + font_name;
+      this._ctx.textAlign = ['left', 'center', 'right'][align];
+
       var x = rect.x;
+      var y = rect.y + font_height;
       if (this._ctx.textAlign === 'left') {
         var _x4 = rect.x;
       }
@@ -164,9 +161,7 @@ var Bitmap = function () {
       if (this._ctx.textAlign === 'right') {
         x = rect.x + (rect.width + str_width - str_width);
       }
-
-      this._ctx.fillText(str, x, rect.y + font_height, rect.width);
-
+      this._ctx.fillText(str, x, y, rect.width);
       this._ctx.restore();
     }
   }, {
@@ -256,15 +251,27 @@ var Bitmap = function () {
         this._ctx.putImageData(image_data, 0, 0);
       }
     }
-  }], [{
-    key: 'fillRect',
-    value: function fillRect(rect, color) {}
   }, {
-    key: 'clear',
-    value: function clear() {}
+    key: 'fillRect',
+    value: function fillRect(rect, color) {
+      var ctx = this._ctx;
+      ctx.save();
+      ctx.fillStyle = color.toRgbHex();
+      ctx.fillRect.apply(ctx, _toConsumableArray(rect.toArray()));
+      ctx.restore();
+    }
   }, {
     key: 'clearRect',
-    value: function clearRect(rect) {}
+    value: function clearRect(rect) {
+      var _ctx4;
+
+      (_ctx4 = this._ctx).clearRect.apply(_ctx4, _toConsumableArray(rect.toArray()));
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {
+      this.clearRect(new Rect(0, 0, this.width, this.height));
+    }
   }]);
 
   return Bitmap;

@@ -40,34 +40,29 @@ class Bitmap {
     let font_name = this.font.name
     let font_size = this.font.size
 
-    // Tip canvas 获取不到字高，默认字高为字号大小的 90%
-    let font_height = this.font.size * 0.9
-
-    this._ctx.save()
-
-    this._ctx.rect( ...rect.toArray() )
-    this._ctx.clip()
-
-    this._ctx.fillStyle = this.font.color.toRgbHex()
-    this._ctx.font    = `${font_size}px ${font_name}`
-
-    this._ctx.textAlign = ['left', 'center', 'right'][align]
-
+    // 计算字高
+    let font_height = rect.height - (rect.height - this.font.size * 0.7) / 2
     let str_width = this._ctx.measureText(str).width
 
+    this._ctx.save()
+    this._ctx.rect( ...rect.toArray() )
+    this._ctx.clip()
+    this._ctx.fillStyle = this.font.color.toRgbHex()
+    this._ctx.font    = `${font_size}px ${font_name}`
+    this._ctx.textAlign = ['left', 'center', 'right'][align]
+
     let x = rect.x
+    let y = rect.y + font_height
     if ( this._ctx.textAlign === 'left' ) {
       let x = rect.x
     }
     if ( this._ctx.textAlign === 'center' ) {
-      x = rect.x + (rect.width+str_width) / 2 - str_width / 2
+      x = rect.x + ( rect.width + str_width ) / 2 - str_width / 2
     }
     if ( this._ctx.textAlign === 'right' ) {
-      x = rect.x + ( (rect.width+str_width) - str_width )
+      x = rect.x + ( (rect.width + str_width) - str_width )
     }
-
-    this._ctx.fillText(str,x, rect.y + font_height, rect.width)
-
+    this._ctx.fillText(str,x,y,rect.width)
     this._ctx.restore()
   }
 

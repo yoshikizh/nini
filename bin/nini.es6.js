@@ -103,34 +103,29 @@ class Bitmap {
     let font_name = this.font.name
     let font_size = this.font.size
 
-    // Tip canvas 获取不到字高，默认字高为字号大小的 90%
-    let font_height = this.font.size * 0.9
-
-    this._ctx.save()
-
-    this._ctx.rect( ...rect.toArray() )
-    this._ctx.clip()
-
-    this._ctx.fillStyle = this.font.color.toRgbHex()
-    this._ctx.font    = `${font_size}px ${font_name}`
-
-    this._ctx.textAlign = ['left', 'center', 'right'][align]
-
+    // 计算字高
+    let font_height = rect.height - (rect.height - this.font.size * 0.7) / 2
     let str_width = this._ctx.measureText(str).width
 
+    this._ctx.save()
+    this._ctx.rect( ...rect.toArray() )
+    this._ctx.clip()
+    this._ctx.fillStyle = this.font.color.toRgbHex()
+    this._ctx.font    = `${font_size}px ${font_name}`
+    this._ctx.textAlign = ['left', 'center', 'right'][align]
+
     let x = rect.x
+    let y = rect.y + font_height
     if ( this._ctx.textAlign === 'left' ) {
       let x = rect.x
     }
     if ( this._ctx.textAlign === 'center' ) {
-      x = rect.x + (rect.width+str_width) / 2 - str_width / 2
+      x = rect.x + ( rect.width + str_width ) / 2 - str_width / 2
     }
     if ( this._ctx.textAlign === 'right' ) {
-      x = rect.x + ( (rect.width+str_width) - str_width )
+      x = rect.x + ( (rect.width + str_width) - str_width )
     }
-
-    this._ctx.fillText(str,x, rect.y + font_height, rect.width)
-
+    this._ctx.fillText(str,x,y,rect.width)
     this._ctx.restore()
   }
 
@@ -201,30 +196,33 @@ class Bitmap {
       let _offset = ((offset % 360) + 360) % 360;
 
       for (let i = 0; i < pix_data.length; i += 4) {
-          let hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2]);
-          let h = (hsl[0] + _offset) % 360;
-          let s = hsl[1];
-          let l = hsl[2];
-          let rgb = _hslToRgb(h, s, l);
-          pix_data[i + 0] = rgb[0];
-          pix_data[i + 1] = rgb[1];
-          pix_data[i + 2] = rgb[2];
+        let hsl = _rgbToHsl(pix_data[i + 0], pix_data[i + 1], pix_data[i + 2])
+        let h = (hsl[0] + _offset) % 360
+        let s = hsl[1]
+        let l = hsl[2]
+        let rgb = _hslToRgb(h, s, l)
+        pix_data[i + 0] = rgb[0]
+        pix_data[i + 1] = rgb[1]
+        pix_data[i + 2] = rgb[2]
       }
-      this._ctx.putImageData(image_data, 0, 0);
+      this._ctx.putImageData(image_data, 0, 0)
     }
-
   }
 
-  static fillRect(rect, color) {
-
+  fillRect(rect, color) {
+    let ctx = this._ctx
+    ctx.save()
+    ctx.fillStyle = color.toRgbHex();
+    ctx.fillRect(...rect.toArray());
+    ctx.restore()
   }
 
-  static clear(){
-
+  clearRect(rect) {
+    this._ctx.clearRect(...rect.toArray());
   }
 
-  static clearRect(rect) {
-
+  clear(){
+    this.clearRect(new Rect(0, 0, this.width, this.height));
   }
 
 }
