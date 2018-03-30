@@ -115,7 +115,7 @@ class Bitmap {
   }
 
   drawText(rect, str, align = 0) {
-    
+
     // 计算字高
     let font_height = rect.height - (rect.height - this.font.size * 0.7) / 2
     let str_width = this._measureTextWidth(str)
@@ -224,12 +224,26 @@ class Bitmap {
     }
   }
 
+  drawCircle(x, y, radius, color) {
+    let ctx = this._ctx
+    ctx.save()
+    ctx.fillStyle = color.toRgbHex()
+    ctx.beginPath()
+    ctx.arc(x, y, radius, 0, Math.PI * 2, false)
+    ctx.fill()
+    ctx.restore()
+  }
+
   fillRect(rect, color) {
     let ctx = this._ctx
     ctx.save()
     ctx.fillStyle = color.toRgbHex();
     ctx.fillRect(...rect.toArray());
     ctx.restore()
+  }
+
+  fillAll(color) {
+    this.fillRect(new Rect(0, 0, this.width, this.height), color.toRgbHex())
   }
 
   clearRect(rect) {
@@ -260,6 +274,8 @@ class Sprite {
 
     this._mirror = false
 
+    this._color = new Color(0,0,0,0)
+
     Graphics.addSprite(this)
   }
 
@@ -283,6 +299,8 @@ class Sprite {
   set ox(value){ this._ox = value }
   get oy(){ return this._oy }
   set oy(value){ this._oy = value }
+  get color(){ return this._color }
+  set color(value){ this._color = value }
 
   dispose(){
 
@@ -320,16 +338,27 @@ class Graphics {
         let _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale
         let _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale
 
+        let _color = sprite.color
+
         this.ctx.save()
         this.ctx.translate(_ctx_ox,_ctx_oy)
         this.ctx.rotate(sprite.angle*Math.PI/180);
         this.ctx.translate(-_ctx_ox,-_ctx_oy)
         
         this.ctx.drawImage( bitmap._canvas ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
+        
+        if (_color.alpha > 0){
+          this.ctx.globalCompositeOperation = 'source-over'
+          this.ctx.fillStyle = _color.toRgbHex()
+          this.ctx.globalAlpha = _color.alpha / 255
+          this.ctx.fillRect(_x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale)
+        }
 
         this.ctx.rotate(0)
         this.ctx.globalAlpha = 1
         this.ctx.restore()
+
+
       }
 
     })

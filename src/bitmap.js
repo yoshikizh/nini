@@ -161,6 +161,16 @@ class Bitmap {
     }
   }
 
+  drawCircle(x, y, radius, color) {
+    let ctx = this._ctx
+    ctx.save()
+    ctx.fillStyle = color.toRgbHex()
+    ctx.beginPath()
+    ctx.arc(x, y, radius, 0, Math.PI * 2, false)
+    ctx.fill()
+    ctx.restore()
+  }
+
   fillRect(rect, color) {
     let ctx = this._ctx
     ctx.save()
@@ -169,8 +179,8 @@ class Bitmap {
     ctx.restore()
   }
 
-  fillAll = function(color) {
-    this.fillRect(new Rect(0, 0, this.width, this.height), color.toRgbHex());
+  fillAll(color) {
+    this.fillRect(new Rect(0, 0, this.width, this.height), color.toRgbHex())
   }
 
   clearRect(rect) {

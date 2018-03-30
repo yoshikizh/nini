@@ -272,6 +272,17 @@ var Bitmap = function () {
       }
     }
   }, {
+    key: 'drawCircle',
+    value: function drawCircle(x, y, radius, color) {
+      var ctx = this._ctx;
+      ctx.save();
+      ctx.fillStyle = color.toRgbHex();
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+      ctx.fill();
+      ctx.restore();
+    }
+  }, {
     key: 'fillRect',
     value: function fillRect(rect, color) {
       var ctx = this._ctx;
@@ -279,6 +290,11 @@ var Bitmap = function () {
       ctx.fillStyle = color.toRgbHex();
       ctx.fillRect.apply(ctx, _toConsumableArray(rect.toArray()));
       ctx.restore();
+    }
+  }, {
+    key: 'fillAll',
+    value: function fillAll(color) {
+      this.fillRect(new Rect(0, 0, this.width, this.height), color.toRgbHex());
     }
   }, {
     key: 'clearRect',
@@ -317,6 +333,8 @@ var Sprite = function () {
     this._oy = 0;
 
     this._mirror = false;
+
+    this._color = new Color(0, 0, 0, 0);
 
     Graphics.addSprite(this);
   }
@@ -404,6 +422,14 @@ var Sprite = function () {
     set: function set(value) {
       this._oy = value;
     }
+  }, {
+    key: 'color',
+    get: function get() {
+      return this._color;
+    },
+    set: function set(value) {
+      this._color = value;
+    }
   }]);
 
   return Sprite;
@@ -448,12 +474,21 @@ var Graphics = function () {
           var _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale;
           var _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale;
 
+          var _color = sprite.color;
+
           _this2.ctx.save();
           _this2.ctx.translate(_ctx_ox, _ctx_oy);
           _this2.ctx.rotate(sprite.angle * Math.PI / 180);
           _this2.ctx.translate(-_ctx_ox, -_ctx_oy);
 
           _this2.ctx.drawImage(bitmap._canvas, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+
+          if (_color.alpha > 0) {
+            _this2.ctx.globalCompositeOperation = 'source-over';
+            _this2.ctx.fillStyle = _color.toRgbHex();
+            _this2.ctx.globalAlpha = _color.alpha / 255;
+            _this2.ctx.fillRect(_x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+          }
 
           _this2.ctx.rotate(0);
           _this2.ctx.globalAlpha = 1;

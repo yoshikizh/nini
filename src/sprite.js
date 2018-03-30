@@ -16,6 +16,8 @@ class Sprite {
 
     this._mirror = false
 
+    this._color = new Color(0,0,0,0)
+
     Graphics.addSprite(this)
   }
 
@@ -39,6 +41,8 @@ class Sprite {
   set ox(value){ this._ox = value }
   get oy(){ return this._oy }
   set oy(value){ this._oy = value }
+  get color(){ return this._color }
+  set color(value){ this._color = value }
 
   dispose(){
 
