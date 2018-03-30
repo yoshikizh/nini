@@ -9,8 +9,6 @@ class SceneExample007 extends SceneBase {
 
     let bitmap = new Bitmap('./assets/images/nini_sm.jpg')
 
-    // let color_hash = [new Color(255,0,0,100), new Color(0,255,0,100), new Color(0,0,255,100)]
-
     for ( let i = 0; i < 3; i ++ ) {
 
       let sprite = new Sprite()
@@ -21,8 +19,6 @@ class SceneExample007 extends SceneBase {
 
       sprite.ox = 0.5
       sprite.oy = 0.5
-
-      // sprite.color = color_hash[i]
 
       // 自定义动画计数 和 状态
       sprite.animation_count = 0
