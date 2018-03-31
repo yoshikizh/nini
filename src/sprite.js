@@ -18,7 +18,24 @@ class Sprite {
 
     this._color = new Color(0,0,0,0)
 
+    this.on_touchstart_callback = null
+    this.on_touchmove_callback = null
+    this.on_touchend_callback = null
+
+    this.touched = false
+
     Graphics.addSprite(this)
+  }
+
+  realRect(){
+
+    let w = this.bitmap.width
+    let h = this.bitmap.height
+
+    let x = this.x - this.ox * w
+    let y = this.y - this.oy * h
+
+    return new Rect(x, y, w, h)
   }
 
   get _viewport(){ return this.__viewport }
@@ -43,6 +60,18 @@ class Sprite {
   set oy(value){ this._oy = value }
   get color(){ return this._color }
   set color(value){ this._color = value }
+
+  onTouchstart(callback){
+    this.on_touchstart_callback = callback
+  }
+
+  onTouchmove(callback){
+    this.on_touchmove_callback = callback
+  }
+
+  onTouchend(callback){
+    this.on_touchend_callback = callback
+  }
 
   dispose(){
 

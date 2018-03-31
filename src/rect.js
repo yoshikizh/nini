@@ -13,5 +13,9 @@ class Rect{
   isValid(){
     return this.x >= 0 && this.y >= 0 && this.width > 0 && this.height > 0
   }
+
+  isInclude(x,y){
+    return x >= this.x && x <= ( this.x + this.width ) && y >= this.y && y <= ( this.y + this.height )
+  }
 }
 

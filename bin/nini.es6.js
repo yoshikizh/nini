@@ -5,7 +5,105 @@ Math.rand = function(max) {
 Array.prototype.clear = function() {
   this.splice(0,this.length)
 }
-class Rect{
+class Toucher{
+
+  initalize(){
+    this.x = 0
+    this.y = 0
+    return new Toucher()
+  }
+
+
+  constructor(){
+
+    this.touched = false
+    this.touch_struct = { touch_start_pos: null, touch_move_pos: null  }
+
+    this.initEvents()
+  }
+
+
+
+  touchstartHandler(e){
+
+    e.preventDefault()  
+    let x,y
+    if ( e.touches ){
+      x = e.touches[0].clientX
+      y = e.touches[0].clientY
+    } else {
+      x = e.layerX || e.offsetX
+      y = e.layerY || e.offsetY
+    }
+
+    if (x && y){
+      this.touch_struct.touch_start_pos = [x,y]
+      Toucher.x = x
+      Toucher.y = y
+      this.touched = true
+      Graphics.touchstartCallback()
+    }
+
+  }
+
+
+  touchmoveHandler(e){
+
+    e.preventDefault()  
+    let x
+    let y
+    if ( e.touches ){
+      x = e.touches[0].clientX
+      y = e.touches[0].clientY
+    } else {
+      x = e.layerX || e.offsetX
+      y = e.layerY || e.offsetY
+    }
+
+    if (x && y) {
+      Toucher.x = x
+      Toucher.y = y
+      this.touch_struct.touch_move_pos = [x,y]
+      Graphics.touchmoveCallback()
+    }
+
+  }
+
+  touchendhandler(e){
+
+    e.preventDefault()
+
+    this.touched = null
+    this._clearStruct()
+    Graphics.touchendCallback()
+  }
+
+
+  initEvents(){
+
+    canvas.addEventListener('mouseup', this.touchendhandler.bind(this))
+    canvas.addEventListener('mousemove', this.touchmoveHandler.bind(this))
+    canvas.addEventListener('mousedown', this.touchstartHandler.bind(this))
+
+    canvas.addEventListener('touchstart', this.touchstartHandler.bind(this))
+    canvas.addEventListener('touchmove', this.touchmoveHandler.bind(this))
+    canvas.addEventListener('touchend', this.touchendhandler.bind(this))
+
+  }
+
+  _clearStruct(){
+    this.touch_struct.touch_start_pos = null
+    this.touch_struct.touch_move_pos = null
+  }
+
+
+  update(){
+
+
+
+  }
+
+}class Rect{
   constructor(x,y,width,height){
     this.x = x
     this.y = y
@@ -19,6 +117,10 @@ class Rect{
 
   isValid(){
     return this.x >= 0 && this.y >= 0 && this.width > 0 && this.height > 0
+  }
+
+  isInclude(x,y){
+    return x >= this.x && x <= ( this.x + this.width ) && y >= this.y && y <= ( this.y + this.height )
   }
 }
 
@@ -276,7 +378,24 @@ class Sprite {
 
     this._color = new Color(0,0,0,0)
 
+    this.on_touchstart_callback = null
+    this.on_touchmove_callback = null
+    this.on_touchend_callback = null
+
+    this.touched = false
+
     Graphics.addSprite(this)
+  }
+
+  realRect(){
+
+    let w = this.bitmap.width
+    let h = this.bitmap.height
+
+    let x = this.x - this.ox * w
+    let y = this.y - this.oy * h
+
+    return new Rect(x, y, w, h)
   }
 
   get _viewport(){ return this.__viewport }
@@ -302,6 +421,18 @@ class Sprite {
   get color(){ return this._color }
   set color(value){ this._color = value }
 
+  onTouchstart(callback){
+    this.on_touchstart_callback = callback
+  }
+
+  onTouchmove(callback){
+    this.on_touchmove_callback = callback
+  }
+
+  onTouchend(callback){
+    this.on_touchend_callback = callback
+  }
+
   dispose(){
 
   }
@@ -316,53 +447,85 @@ class Graphics {
     this.height = canvas.height
     this.frame_count = 0
     this.sprites = []
+    this.toucher = new Toucher()
+    this.touched_sprite = null
   }
 
   static update(){
     this.frame_count++
     this.clearCtx()
 
-    let bitmap = null
-
-    this.sprites.forEach((sprite)=>{
-
-      bitmap = sprite.bitmap
-
-      if ( bitmap ) {
-
-        this.ctx.globalAlpha = (1 / 255) * sprite.opacity
-
-        let _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale)
-        let _y = sprite.y - sprite.oy * (bitmap.height * sprite.scale)
-
-        let _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale
-        let _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale
-
-        let _color = sprite.color
-
-        this.ctx.save()
-        this.ctx.translate(_ctx_ox,_ctx_oy)
-        this.ctx.rotate(sprite.angle*Math.PI/180);
-        this.ctx.translate(-_ctx_ox,-_ctx_oy)
-        
-        this.ctx.drawImage( bitmap._canvas ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
-        
-        if (_color.alpha > 0){
-          this.ctx.globalCompositeOperation = 'source-over'
-          this.ctx.fillStyle = _color.toRgbHex()
-          this.ctx.globalAlpha = _color.alpha / 255
-          this.ctx.fillRect(_x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale)
-        }
-
-        this.ctx.rotate(0)
-        this.ctx.globalAlpha = 1
-        this.ctx.restore()
-
-
-      }
-
+    this.sortedSpritesByZOrder(this.sprites).forEach((sprite)=>{
+      this.refreshSpriteCanvas(sprite)
     })
 
+  }
+
+  static refreshSpriteCanvas(sprite){
+    let bitmap = sprite.bitmap
+
+    if ( bitmap ) {
+
+      this.ctx.globalAlpha = (1 / 255) * sprite.opacity
+
+      let _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale)
+      let _y = sprite.y - sprite.oy * (bitmap.height * sprite.scale)
+
+      let _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale
+      let _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale
+
+      let _color = sprite.color
+
+      this.ctx.save()
+      this.ctx.translate(_ctx_ox,_ctx_oy)
+      this.ctx.rotate(sprite.angle*Math.PI/180);
+      this.ctx.translate(-_ctx_ox,-_ctx_oy)
+      
+      this.ctx.drawImage( bitmap._canvas ,0 ,0 , bitmap.width, bitmap.height, _x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale )
+      
+      if (_color.alpha > 0){
+        this.ctx.globalCompositeOperation = 'source-over'
+        this.ctx.fillStyle = _color.toRgbHex()
+        this.ctx.globalAlpha = _color.alpha / 255
+        this.ctx.fillRect(_x, _y, bitmap.width* sprite.scale, bitmap.height* sprite.scale)
+      }
+
+      this.ctx.rotate(0)
+      this.ctx.globalAlpha = 1
+      this.ctx.restore()
+
+    }
+
+  }
+
+  static isTouch(sprite){
+    return sprite.realRect().isInclude(Toucher.x,Toucher.y)
+  }
+
+  static sortedSpritesByZOrder(sprites){
+    return sprites.sort((a,b)=>{ return a.z - b.z })
+  }
+
+
+  static touchstartCallback(){
+
+    let sprites = this.sprites.filter((sprite)=>{
+      return sprite.on_touchstart_callback !== null && this.isTouch(sprite)
+    })
+    let touched_sprite = sprites[sprites.length-1]
+    if (touched_sprite) {
+      touched_sprite.on_touchstart_callback()
+      this.touched_sprite = touched_sprite
+    }
+  }
+  static touchmoveCallback(){
+    
+  }
+  static touchendCallback(){
+    if (this.touched_sprite){
+      this.touched_sprite.on_touchend_callback()
+      this.touched_sprite = null
+    }
   }
 
   static addSprite(sprite){
@@ -375,6 +538,10 @@ class Graphics {
 
   static clearSprites(){
     this.sprites.clear()
+  }
+
+  static dispose_sprite(){
+
   }
 
 }

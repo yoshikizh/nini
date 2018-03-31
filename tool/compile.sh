@@ -9,6 +9,7 @@ if [ -f ./bin/nini.js ]; then
 fi
 
 cat ./src/monkey_patches.js >> ./bin/nini.es6.js
+cat ./src/toucher.js >> ./bin/nini.es6.js
 cat ./src/rect.js >> ./bin/nini.es6.js
 cat ./src/color.js >> ./bin/nini.es6.js
 cat ./src/font.js >> ./bin/nini.es6.js

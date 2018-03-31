@@ -16,6 +16,106 @@ Array.prototype.clear = function () {
   this.splice(0, this.length);
 };
 
+var Toucher = function () {
+  _createClass(Toucher, [{
+    key: 'initalize',
+    value: function initalize() {
+      this.x = 0;
+      this.y = 0;
+      return new Toucher();
+    }
+  }]);
+
+  function Toucher() {
+    _classCallCheck(this, Toucher);
+
+    this.touched = false;
+    this.touch_struct = { touch_start_pos: null, touch_move_pos: null };
+
+    this.initEvents();
+  }
+
+  _createClass(Toucher, [{
+    key: 'touchstartHandler',
+    value: function touchstartHandler(e) {
+
+      e.preventDefault();
+      var x = void 0,
+          y = void 0;
+      if (e.touches) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+      } else {
+        x = e.layerX || e.offsetX;
+        y = e.layerY || e.offsetY;
+      }
+
+      if (x && y) {
+        this.touch_struct.touch_start_pos = [x, y];
+        Toucher.x = x;
+        Toucher.y = y;
+        this.touched = true;
+        Graphics.touchstartCallback();
+      }
+    }
+  }, {
+    key: 'touchmoveHandler',
+    value: function touchmoveHandler(e) {
+
+      e.preventDefault();
+      var x = void 0;
+      var y = void 0;
+      if (e.touches) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+      } else {
+        x = e.layerX || e.offsetX;
+        y = e.layerY || e.offsetY;
+      }
+
+      if (x && y) {
+        Toucher.x = x;
+        Toucher.y = y;
+        this.touch_struct.touch_move_pos = [x, y];
+        Graphics.touchmoveCallback();
+      }
+    }
+  }, {
+    key: 'touchendhandler',
+    value: function touchendhandler(e) {
+
+      e.preventDefault();
+
+      this.touched = null;
+      this._clearStruct();
+      Graphics.touchendCallback();
+    }
+  }, {
+    key: 'initEvents',
+    value: function initEvents() {
+
+      canvas.addEventListener('mouseup', this.touchendhandler.bind(this));
+      canvas.addEventListener('mousemove', this.touchmoveHandler.bind(this));
+      canvas.addEventListener('mousedown', this.touchstartHandler.bind(this));
+
+      canvas.addEventListener('touchstart', this.touchstartHandler.bind(this));
+      canvas.addEventListener('touchmove', this.touchmoveHandler.bind(this));
+      canvas.addEventListener('touchend', this.touchendhandler.bind(this));
+    }
+  }, {
+    key: '_clearStruct',
+    value: function _clearStruct() {
+      this.touch_struct.touch_start_pos = null;
+      this.touch_struct.touch_move_pos = null;
+    }
+  }, {
+    key: 'update',
+    value: function update() {}
+  }]);
+
+  return Toucher;
+}();
+
 var Rect = function () {
   function Rect(x, y, width, height) {
     _classCallCheck(this, Rect);
@@ -35,6 +135,11 @@ var Rect = function () {
     key: 'isValid',
     value: function isValid() {
       return this.x >= 0 && this.y >= 0 && this.width > 0 && this.height > 0;
+    }
+  }, {
+    key: 'isInclude',
+    value: function isInclude(x, y) {
+      return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
   }]);
 
@@ -336,10 +441,43 @@ var Sprite = function () {
 
     this._color = new Color(0, 0, 0, 0);
 
+    this.on_touchstart_callback = null;
+    this.on_touchmove_callback = null;
+    this.on_touchend_callback = null;
+
+    this.touched = false;
+
     Graphics.addSprite(this);
   }
 
   _createClass(Sprite, [{
+    key: 'realRect',
+    value: function realRect() {
+
+      var w = this.bitmap.width;
+      var h = this.bitmap.height;
+
+      var x = this.x - this.ox * w;
+      var y = this.y - this.oy * h;
+
+      return new Rect(x, y, w, h);
+    }
+  }, {
+    key: 'onTouchstart',
+    value: function onTouchstart(callback) {
+      this.on_touchstart_callback = callback;
+    }
+  }, {
+    key: 'onTouchmove',
+    value: function onTouchmove(callback) {
+      this.on_touchmove_callback = callback;
+    }
+  }, {
+    key: 'onTouchend',
+    value: function onTouchend(callback) {
+      this.on_touchend_callback = callback;
+    }
+  }, {
     key: 'dispose',
     value: function dispose() {}
   }, {
@@ -449,6 +587,8 @@ var Graphics = function () {
       this.height = canvas.height;
       this.frame_count = 0;
       this.sprites = [];
+      this.toucher = new Toucher();
+      this.touched_sprite = null;
     }
   }, {
     key: 'update',
@@ -458,43 +598,82 @@ var Graphics = function () {
       this.frame_count++;
       this.clearCtx();
 
-      var bitmap = null;
-
-      this.sprites.forEach(function (sprite) {
-
-        bitmap = sprite.bitmap;
-
-        if (bitmap) {
-
-          _this2.ctx.globalAlpha = 1 / 255 * sprite.opacity;
-
-          var _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale);
-          var _y = sprite.y - sprite.oy * (bitmap.height * sprite.scale);
-
-          var _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale;
-          var _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale;
-
-          var _color = sprite.color;
-
-          _this2.ctx.save();
-          _this2.ctx.translate(_ctx_ox, _ctx_oy);
-          _this2.ctx.rotate(sprite.angle * Math.PI / 180);
-          _this2.ctx.translate(-_ctx_ox, -_ctx_oy);
-
-          _this2.ctx.drawImage(bitmap._canvas, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
-
-          if (_color.alpha > 0) {
-            _this2.ctx.globalCompositeOperation = 'source-over';
-            _this2.ctx.fillStyle = _color.toRgbHex();
-            _this2.ctx.globalAlpha = _color.alpha / 255;
-            _this2.ctx.fillRect(_x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
-          }
-
-          _this2.ctx.rotate(0);
-          _this2.ctx.globalAlpha = 1;
-          _this2.ctx.restore();
-        }
+      this.sortedSpritesByZOrder(this.sprites).forEach(function (sprite) {
+        _this2.refreshSpriteCanvas(sprite);
       });
+    }
+  }, {
+    key: 'refreshSpriteCanvas',
+    value: function refreshSpriteCanvas(sprite) {
+      var bitmap = sprite.bitmap;
+
+      if (bitmap) {
+
+        this.ctx.globalAlpha = 1 / 255 * sprite.opacity;
+
+        var _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale);
+        var _y = sprite.y - sprite.oy * (bitmap.height * sprite.scale);
+
+        var _ctx_ox = _x + sprite.ox * bitmap.width * sprite.scale;
+        var _ctx_oy = _y + sprite.oy * bitmap.height * sprite.scale;
+
+        var _color = sprite.color;
+
+        this.ctx.save();
+        this.ctx.translate(_ctx_ox, _ctx_oy);
+        this.ctx.rotate(sprite.angle * Math.PI / 180);
+        this.ctx.translate(-_ctx_ox, -_ctx_oy);
+
+        this.ctx.drawImage(bitmap._canvas, 0, 0, bitmap.width, bitmap.height, _x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+
+        if (_color.alpha > 0) {
+          this.ctx.globalCompositeOperation = 'source-over';
+          this.ctx.fillStyle = _color.toRgbHex();
+          this.ctx.globalAlpha = _color.alpha / 255;
+          this.ctx.fillRect(_x, _y, bitmap.width * sprite.scale, bitmap.height * sprite.scale);
+        }
+
+        this.ctx.rotate(0);
+        this.ctx.globalAlpha = 1;
+        this.ctx.restore();
+      }
+    }
+  }, {
+    key: 'isTouch',
+    value: function isTouch(sprite) {
+      return sprite.realRect().isInclude(Toucher.x, Toucher.y);
+    }
+  }, {
+    key: 'sortedSpritesByZOrder',
+    value: function sortedSpritesByZOrder(sprites) {
+      return sprites.sort(function (a, b) {
+        return a.z - b.z;
+      });
+    }
+  }, {
+    key: 'touchstartCallback',
+    value: function touchstartCallback() {
+      var _this3 = this;
+
+      var sprites = this.sprites.filter(function (sprite) {
+        return sprite.on_touchstart_callback !== null && _this3.isTouch(sprite);
+      });
+      var touched_sprite = sprites[sprites.length - 1];
+      if (touched_sprite) {
+        touched_sprite.on_touchstart_callback();
+        this.touched_sprite = touched_sprite;
+      }
+    }
+  }, {
+    key: 'touchmoveCallback',
+    value: function touchmoveCallback() {}
+  }, {
+    key: 'touchendCallback',
+    value: function touchendCallback() {
+      if (this.touched_sprite) {
+        this.touched_sprite.on_touchend_callback();
+        this.touched_sprite = null;
+      }
     }
   }, {
     key: 'addSprite',
@@ -511,6 +690,9 @@ var Graphics = function () {
     value: function clearSprites() {
       this.sprites.clear();
     }
+  }, {
+    key: 'dispose_sprite',
+    value: function dispose_sprite() {}
   }]);
 
   return Graphics;
