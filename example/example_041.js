@@ -18,16 +18,14 @@ class SceneExample041 extends SceneBase {
     this.sp.ox = 0.5
     this.sp.oy = 0.5
 
+    this.is_drag = false
+
     this.sp.onTouchstart(()=>{
-      console.log("start")
-    })
-
-    this.sp.onTouchmove(()=>{
-
+      this.is_drag = true
     })
 
     this.sp.onTouchend(()=>{
-      console.log("over")
+      this.is_drag = false
     })
 
 
@@ -40,6 +38,11 @@ class SceneExample041 extends SceneBase {
 
     // 调用父类的update(必须)
     super.update()
+
+    if ( this.is_drag ) {
+      this.sp.x = Toucher.x
+      this.sp.y = Toucher.y
+    }
 
   }
 
