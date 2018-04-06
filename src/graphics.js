@@ -26,6 +26,12 @@ class Graphics {
 
     if ( bitmap ) {
 
+      if ( sprite.viewport ){
+        this.ctx.save()
+        this.ctx.rect( ...sprite.viewport.toArray() )
+        this.ctx.clip()
+      }
+
       this.ctx.globalAlpha = (1 / 255) * sprite.opacity
 
       let _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale)
@@ -53,6 +59,12 @@ class Graphics {
       this.ctx.rotate(0)
       this.ctx.globalAlpha = 1
       this.ctx.restore()
+
+      if ( sprite.viewport ){
+        this.ctx.restore()
+      }
+
+
 
     }
 
@@ -100,7 +112,7 @@ class Graphics {
     this.sprites.clear()
   }
 
-  static dispose_sprite(){
+  static dispose_sprite(sprite){
 
   }
 

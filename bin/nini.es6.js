@@ -158,9 +158,18 @@ class Font{
       throw new Error('Viewport参数必须是Rect对象')
       return
     } 
-    this.rect = obj
+    this.x = obj.x
+    this.y = obj.y
+    this.width = obj.width
+    this.height = obj.height
   }
 
+  toRect(){
+    return new Rect(this.x, this.y, this.width, this.height)
+  }
+  toArray(){
+    return [this.x, this.y, this.width, this.height]
+  }
 }
 
 class Bitmap {
@@ -420,6 +429,8 @@ class Sprite {
   set oy(value){ this._oy = value }
   get color(){ return this._color }
   set color(value){ this._color = value }
+  get viewport(){ return this._viewport }
+  set viewport(value){ this._viewport = value }
 
   onTouchstart(callback){
     this.on_touchstart_callback = callback
@@ -466,6 +477,12 @@ class Graphics {
 
     if ( bitmap ) {
 
+      if ( sprite.viewport ){
+        this.ctx.save()
+        this.ctx.rect( ...sprite.viewport.toArray() )
+        this.ctx.clip()
+      }
+
       this.ctx.globalAlpha = (1 / 255) * sprite.opacity
 
       let _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale)
@@ -493,6 +510,12 @@ class Graphics {
       this.ctx.rotate(0)
       this.ctx.globalAlpha = 1
       this.ctx.restore()
+
+      if ( sprite.viewport ){
+        this.ctx.restore()
+      }
+
+
 
     }
 
@@ -540,7 +563,7 @@ class Graphics {
     this.sprites.clear()
   }
 
-  static dispose_sprite(){
+  static dispose_sprite(sprite){
 
   }
 

@@ -184,15 +184,34 @@ var Font = function Font() {
   this.size = 16;
 };
 
-var Viewport = function Viewport(obj) {
-  _classCallCheck(this, Viewport);
+var Viewport = function () {
+  function Viewport(obj) {
+    _classCallCheck(this, Viewport);
 
-  if (obj.constructor.name !== 'Rect') {
-    throw new Error('Viewport参数必须是Rect对象');
-    return;
+    if (obj.constructor.name !== 'Rect') {
+      throw new Error('Viewport参数必须是Rect对象');
+      return;
+    }
+    this.x = obj.x;
+    this.y = obj.y;
+    this.width = obj.width;
+    this.height = obj.height;
   }
-  this.rect = obj;
-};
+
+  _createClass(Viewport, [{
+    key: 'toRect',
+    value: function toRect() {
+      return new Rect(this.x, this.y, this.width, this.height);
+    }
+  }, {
+    key: 'toArray',
+    value: function toArray() {
+      return [this.x, this.y, this.width, this.height];
+    }
+  }]);
+
+  return Viewport;
+}();
 
 var Bitmap = function () {
   function Bitmap(obj, callback) {
@@ -568,6 +587,14 @@ var Sprite = function () {
     set: function set(value) {
       this._color = value;
     }
+  }, {
+    key: 'viewport',
+    get: function get() {
+      return this._viewport;
+    },
+    set: function set(value) {
+      this._viewport = value;
+    }
   }]);
 
   return Sprite;
@@ -609,6 +636,14 @@ var Graphics = function () {
 
       if (bitmap) {
 
+        if (sprite.viewport) {
+          var _ctx5;
+
+          this.ctx.save();
+          (_ctx5 = this.ctx).rect.apply(_ctx5, _toConsumableArray(sprite.viewport.toArray()));
+          this.ctx.clip();
+        }
+
         this.ctx.globalAlpha = 1 / 255 * sprite.opacity;
 
         var _x = sprite.x - sprite.ox * (bitmap.width * sprite.scale);
@@ -636,6 +671,10 @@ var Graphics = function () {
         this.ctx.rotate(0);
         this.ctx.globalAlpha = 1;
         this.ctx.restore();
+
+        if (sprite.viewport) {
+          this.ctx.restore();
+        }
       }
     }
   }, {
@@ -692,7 +731,7 @@ var Graphics = function () {
     }
   }, {
     key: 'dispose_sprite',
-    value: function dispose_sprite() {}
+    value: function dispose_sprite(sprite) {}
   }]);
 
   return Graphics;

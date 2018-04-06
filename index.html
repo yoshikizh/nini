@@ -68,6 +68,16 @@
       <a href="javascript:;" onclick="goScene045()">触摸跟随</a>
     </container>
 
+    <div class="container mt10">
+      <span class="linetitle">视口相关</span>
+      &nbsp;
+      <a href="javascript:;" onclick="goScene051()">精灵视口</a>
+      &nbsp;
+      <a href="javascript:;" onclick="goScene052()">视口内拖动</a>
+    </container>
+
+
+
     <script src="./bin/nini.js" type="text/javascript"></script>
     <script src="./example/example_001.js" type="text/javascript"></script>
     <script src="./example/example_002.js" type="text/javascript"></script>
@@ -85,6 +95,8 @@
     <script src="./example/example_031.js" type="text/javascript"></script>
     <script src="./example/example_041.js" type="text/javascript"></script>
     <script src="./example/example_045.js" type="text/javascript"></script>
+    <script src="./example/example_051.js" type="text/javascript"></script>
+    <script src="./example/example_052.js" type="text/javascript"></script>
 
     <script>
 
@@ -105,6 +117,8 @@
       let goScene031 = ()=>{ SceneManage.go(SceneExample031) }
       let goScene041 = ()=>{ SceneManage.go(SceneExample041) }
       let goScene045 = ()=>{ SceneManage.go(SceneExample045) }
+      let goScene051 = ()=>{ SceneManage.go(SceneExample051) }
+      let goScene052 = ()=>{ SceneManage.go(SceneExample052) }
 
       // 配置 canvas id
       Graphics.canvas_id = 'canvas'

@@ -60,6 +60,8 @@ class Sprite {
   set oy(value){ this._oy = value }
   get color(){ return this._color }
   set color(value){ this._color = value }
+  get viewport(){ return this._viewport }
+  set viewport(value){ this._viewport = value }
 
   onTouchstart(callback){
     this.on_touchstart_callback = callback
