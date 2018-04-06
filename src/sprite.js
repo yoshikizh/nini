@@ -23,14 +23,22 @@ class Sprite {
     this.on_touchend_callback = null
 
     this.touched = false
+    this.disposed = false
 
     Graphics.addSprite(this)
   }
 
+  realWidth(){
+    return this.bitmap.width * this.scale
+  }
+  realHeight(){
+    return this.bitmap.height * this.scale
+  }
+
   realRect(){
 
-    let w = this.bitmap.width
-    let h = this.bitmap.height
+    let w = this.realWidth()
+    let h = this.realHeight()
 
     let x = this.x - this.ox * w
     let y = this.y - this.oy * h
@@ -76,7 +84,8 @@ class Sprite {
   }
 
   dispose(){
-
+    Graphics.disposeSprite(this)
+    this.disposed = true
   }
 }
 

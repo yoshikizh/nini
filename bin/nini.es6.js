@@ -122,6 +122,14 @@ class Toucher{
   isInclude(x,y){
     return x >= this.x && x <= ( this.x + this.width ) && y >= this.y && y <= ( this.y + this.height )
   }
+
+  isIncludeRect(rect) {
+    let _x = rect.x
+    let _y = rect.y
+    let _width = rect.width
+    let _height = rect.height
+    return _x > this.x && _x < this.x + this.width && _y > this.y && _y < this.y + this.width
+  }
 }
 
 class Color {
@@ -392,14 +400,22 @@ class Sprite {
     this.on_touchend_callback = null
 
     this.touched = false
+    this.disposed = false
 
     Graphics.addSprite(this)
   }
 
+  realWidth(){
+    return this.bitmap.width * this.scale
+  }
+  realHeight(){
+    return this.bitmap.height * this.scale
+  }
+
   realRect(){
 
-    let w = this.bitmap.width
-    let h = this.bitmap.height
+    let w = this.realWidth()
+    let h = this.realHeight()
 
     let x = this.x - this.ox * w
     let y = this.y - this.oy * h
@@ -445,13 +461,15 @@ class Sprite {
   }
 
   dispose(){
-
+    Graphics.disposeSprite(this)
+    this.disposed = true
   }
 }
 
 class Graphics {
 
   static init(canvas) {
+    this.canvas = canvas
     this.initialized = true
     this.ctx = canvas.getContext('2d')
     this.width = canvas.width
@@ -563,8 +581,12 @@ class Graphics {
     this.sprites.clear()
   }
 
-  static dispose_sprite(sprite){
-
+  static disposeSprite(sprite){
+    this.sprites.forEach((_sprite,i)=>{
+      if(sprite === _sprite){
+        this.sprites.splice(i,1)
+      }
+    })
   }
 
 }

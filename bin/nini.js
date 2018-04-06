@@ -141,6 +141,15 @@ var Rect = function () {
     value: function isInclude(x, y) {
       return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
+  }, {
+    key: 'isIncludeRect',
+    value: function isIncludeRect(rect) {
+      var _x = rect.x;
+      var _y = rect.y;
+      var _width = rect.width;
+      var _height = rect.height;
+      return _x > this.x && _x < this.x + this.width && _y > this.y && _y < this.y + this.width;
+    }
   }]);
 
   return Rect;
@@ -465,16 +474,27 @@ var Sprite = function () {
     this.on_touchend_callback = null;
 
     this.touched = false;
+    this.disposed = false;
 
     Graphics.addSprite(this);
   }
 
   _createClass(Sprite, [{
+    key: 'realWidth',
+    value: function realWidth() {
+      return this.bitmap.width * this.scale;
+    }
+  }, {
+    key: 'realHeight',
+    value: function realHeight() {
+      return this.bitmap.height * this.scale;
+    }
+  }, {
     key: 'realRect',
     value: function realRect() {
 
-      var w = this.bitmap.width;
-      var h = this.bitmap.height;
+      var w = this.realWidth();
+      var h = this.realHeight();
 
       var x = this.x - this.ox * w;
       var y = this.y - this.oy * h;
@@ -498,7 +518,10 @@ var Sprite = function () {
     }
   }, {
     key: 'dispose',
-    value: function dispose() {}
+    value: function dispose() {
+      Graphics.disposeSprite(this);
+      this.disposed = true;
+    }
   }, {
     key: '_viewport',
     get: function get() {
@@ -608,6 +631,7 @@ var Graphics = function () {
   _createClass(Graphics, null, [{
     key: 'init',
     value: function init(canvas) {
+      this.canvas = canvas;
       this.initialized = true;
       this.ctx = canvas.getContext('2d');
       this.width = canvas.width;
@@ -730,8 +754,16 @@ var Graphics = function () {
       this.sprites.clear();
     }
   }, {
-    key: 'dispose_sprite',
-    value: function dispose_sprite(sprite) {}
+    key: 'disposeSprite',
+    value: function disposeSprite(sprite) {
+      var _this4 = this;
+
+      this.sprites.forEach(function (_sprite, i) {
+        if (sprite === _sprite) {
+          _this4.sprites.splice(i, 1);
+        }
+      });
+    }
   }]);
 
   return Graphics;

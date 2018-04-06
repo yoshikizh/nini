@@ -1,6 +1,7 @@
 class Graphics {
 
   static init(canvas) {
+    this.canvas = canvas
     this.initialized = true
     this.ctx = canvas.getContext('2d')
     this.width = canvas.width
@@ -112,8 +113,12 @@ class Graphics {
     this.sprites.clear()
   }
 
-  static dispose_sprite(sprite){
-
+  static disposeSprite(sprite){
+    this.sprites.forEach((_sprite,i)=>{
+      if(sprite === _sprite){
+        this.sprites.splice(i,1)
+      }
+    })
   }
 
 }
